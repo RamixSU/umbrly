@@ -1,0 +1,5 @@
+FUNC SHOW(STR_NAME):
+    PRINT: "VM says hello, [STR_NAME]"
+    RETURN LEN(STR_NAME)
+END
+PRINT: SHOW("world")

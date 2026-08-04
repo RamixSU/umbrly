@@ -1,0 +1,153 @@
+# ============================================================
+# Umbrly Geometry Dash — консольный раннер.
+# SPACE / стрелка вверх — прыжок, Q — выход.
+# ============================================================
+
+INT_W = 64
+INT_H = 19
+INT_GROUND = 15
+INT_PLAYER_X = 8
+INT_PLAYER_Y = INT_GROUND - 1
+INT_VY = 0
+INT_SCORE = 0
+INT_BEST = 0
+INT_SPEED_MS = 65
+INT_TICK = 0
+BOOL_ALIVE = TRUE
+ARR_SPIKES = [35 * 10 + 1, 51 * 10 + 2, 62 * 10 + 1]
+
+FUNC SPIKE_AT(INT_X, INT_Y):
+    FOR: INT_I = 0 TO LEN(ARR_SPIKES) - 1
+        INT_CODE = ARR_SPIKES[INT_I]
+        INT_SX = FLOOR(INT_CODE / 10)
+        INT_SH = INT_CODE % 10
+        IF: INT_X == INT_SX AND INT_Y >= INT_GROUND - INT_SH AND INT_Y < INT_GROUND
+            RETURN TRUE
+        END
+    END
+    RETURN FALSE
+END
+
+FUNC CELL(INT_X, INT_Y):
+    IF: INT_Y == INT_GROUND
+        IF: (INT_X + INT_TICK) % 4 == 0
+            RETURN "="
+        END
+        RETURN "-"
+    END
+    IF: INT_Y > INT_GROUND
+        IF: (INT_X + INT_Y) % 3 == 0
+            RETURN "."
+        END
+        RETURN "_"
+    END
+    IF: INT_X == INT_PLAYER_X AND INT_Y == INT_PLAYER_Y
+        RETURN "@"
+    END
+    IF: SPIKE_AT(INT_X, INT_Y)
+        RETURN "^"
+    END
+    IF: INT_Y == 2 AND (INT_X * 7 + INT_TICK) % 31 == 0
+        RETURN "*"
+    END
+    RETURN " "
+END
+
+FUNC BUILD_ROW(INT_Y):
+    STR_ROW = ""
+    FOR: INT_X = 0 TO INT_W - 1
+        STR_ROW = STR_ROW + CELL(INT_X, INT_Y)
+    END
+    RETURN STR_ROW
+END
+
+FUNC DRAW():
+    GOTOXY(0, 0)
+    COLOR(11, 0)
+    PRINT: "+--------------------------------------------------------------+"
+    COLOR(15, 0)
+    FOR: INT_Y = 1 TO INT_H - 1
+        PRINT: BUILD_ROW(INT_Y)
+    END
+    COLOR(14, 0)
+    PRINT: " SCORE [INT_SCORE]   BEST [INT_BEST]   SPEED [INT_SPEED_MS]ms   SPACE/UP jump   Q quit     "
+    COLOR_RESET()
+END
+
+CONSOLE_TITLE("Umbrly Geometry Dash")
+CLS()
+
+WHILE: BOOL_ALIVE
+    # Прыжок разрешён только с земли.
+    IF: (KEY_PRESSED(32) OR KEY_PRESSED(38)) AND INT_PLAYER_Y == INT_GROUND - 1
+        INT_VY = -3
+        BEEP(900, 18)
+    END
+    IF: KEY_PRESSED(81)
+        BOOL_ALIVE = FALSE
+        BREAK
+    END
+
+    # Простая дискретная физика.
+    INT_PLAYER_Y = INT_PLAYER_Y + INT_VY
+    INT_VY = INT_VY + 1
+    IF: INT_PLAYER_Y >= INT_GROUND - 1
+        INT_PLAYER_Y = INT_GROUND - 1
+        INT_VY = 0
+    END
+    IF: INT_PLAYER_Y < 3
+        INT_PLAYER_Y = 3
+        INT_VY = 1
+    END
+
+    # Двигаем препятствия влево и удаляем ушедшие за экран.
+    ARR_NEXT = []
+    FOR: INT_I = 0 TO LEN(ARR_SPIKES) - 1
+        INT_CODE = ARR_SPIKES[INT_I]
+        INT_SX = FLOOR(INT_CODE / 10) - 1
+        INT_SH = INT_CODE % 10
+        IF: INT_SX >= 0
+            PUSH(ARR_NEXT, INT_SX * 10 + INT_SH)
+        END
+    END
+    ARR_SPIKES = ARR_NEXT
+
+    # Генерируем разнообразные одиночные и двойные шипы.
+    IF: INT_TICK % 22 == 0
+        INT_HEIGHT = RANDOM(1, 2)
+        PUSH(ARR_SPIKES, (INT_W - 2) * 10 + INT_HEIGHT)
+        IF: RANDOM(0, 3) == 0
+            PUSH(ARR_SPIKES, (INT_W - 5) * 10 + 1)
+        END
+    END
+
+    # Столкновение игрока с колонной шипов.
+    FOR: INT_I = 0 TO LEN(ARR_SPIKES) - 1
+        INT_CODE = ARR_SPIKES[INT_I]
+        INT_SX = FLOOR(INT_CODE / 10)
+        INT_SH = INT_CODE % 10
+        IF: INT_SX == INT_PLAYER_X AND INT_PLAYER_Y >= INT_GROUND - INT_SH
+            BOOL_ALIVE = FALSE
+        END
+    END
+
+    INT_TICK = INT_TICK + 1
+    INT_SCORE = INT_SCORE + 1
+    IF: INT_SCORE > INT_BEST
+        INT_BEST = INT_SCORE
+    END
+    IF: INT_SCORE % 120 == 0 AND INT_SPEED_MS > 25
+        INT_SPEED_MS = INT_SPEED_MS - 5
+        BEEP(1300, 35)
+    END
+
+    DRAW()
+    SLEEP(INT_SPEED_MS)
+END
+
+COLOR(12, 0)
+GOTOXY(0, INT_H + 2)
+PRINT: "GAME OVER! Score: [INT_SCORE]   Press any key to close..."
+BEEP(280, 180)
+COLOR_RESET()
+GETKEY()

@@ -1,0 +1,5 @@
+TRY:
+    INT_X = 1 / 0
+CATCH: STR_ERROR
+    PRINT: "caught"
+END

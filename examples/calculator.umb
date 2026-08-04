@@ -1,0 +1,28 @@
+# Калькулятор с функциями, циклом и обработкой ошибок
+FUNC SAFE_DIV(FLOAT_A, FLOAT_B):
+    IF: FLOAT_B == 0
+        RETURN 0
+    END
+    RETURN FLOAT_A / FLOAT_B
+END
+
+PRINT: "=== Калькулятор Umbrly ==="
+
+FLOAT_A = INPUT: "Первое число: "
+FLOAT_B = INPUT: "Второе число: "
+
+PRINT: "[FLOAT_A] + [FLOAT_B] = [FLOAT_A + FLOAT_B]"
+PRINT: "[FLOAT_A] - [FLOAT_B] = [FLOAT_A - FLOAT_B]"
+PRINT: "[FLOAT_A] * [FLOAT_B] = [FLOAT_A * FLOAT_B]"
+
+TRY:
+    IF: FLOAT_B == 0
+        PRINT: "На ноль делить нельзя!"
+    ELSE:
+        PRINT: "[FLOAT_A] / [FLOAT_B] = [FLOAT_A / FLOAT_B]"
+    END
+CATCH: STR_ERR
+    PRINT: "Ошибка вычисления: [STR_ERR]"
+END
+
+PRINT: "SAFE_DIV(10, 0) = [SAFE_DIV(10, 0)]  (без падения программы)"

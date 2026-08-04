@@ -1,0 +1,18 @@
+# Знакомство с Umbrly 2.0
+PRINT: "Hello World"
+
+INT_CYFRA = 67
+PRINT: "[INT_CYFRA] + [INT_CYFRA] = [INT_CYFRA + INT_CYFRA]"
+
+STR_IMYA = INPUT: "Как тебя зовут? "
+PRINT: "Привет, [STR_IMYA]!"
+
+INT_CHISLO = INPUT: "Введите любое число: "
+PRINT: "Квадрат числа [INT_CHISLO] = [INT_CHISLO * INT_CHISLO]"
+
+BOOL_CHETNOE = (INT_CHISLO % 2 == 0)
+IF: BOOL_CHETNOE
+    PRINT: "Число чётное"
+ELSE:
+    PRINT: "Число нечётное"
+END

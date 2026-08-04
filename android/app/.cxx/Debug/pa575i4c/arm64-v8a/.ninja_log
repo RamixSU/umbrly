@@ -1,0 +1,8 @@
+# ninja log v5
+10	8124	8053102960792081	CMakeFiles/umbrly_android.dir/C_/Users/Ramix/Downloads/bgbg/src/lexer.cpp.o	adac83acebd7737b
+1	8952	8053102968914412	CMakeFiles/umbrly_android.dir/android_runner.cpp.o	434b63126c76807d
+57	9242	8053102971890302	CMakeFiles/umbrly_android.dir/C_/Users/Ramix/Downloads/bgbg/src/ast.cpp.o	457b4eae88e6e717
+22	9597	8053102975366214	CMakeFiles/umbrly_android.dir/C_/Users/Ramix/Downloads/bgbg/src/parser.cpp.o	326191be786be25a
+40	9786	8053102977195900	CMakeFiles/umbrly_android.dir/C_/Users/Ramix/Downloads/bgbg/src/interpreter.cpp.o	75e5023a0c20b047
+72	17342	8053103052122979	CMakeFiles/umbrly_android.dir/C_/Users/Ramix/Downloads/bgbg/src/builtins.cpp.o	6db53d194595a6ce
+17343	17609	8053103055238807	C:/Users/Ramix/Downloads/bgbg/android/app/build/intermediates/cxx/Debug/pa575i4c/obj/arm64-v8a/libumbrly_android.so	54f1e05e6889f2d7

@@ -1,0 +1,34 @@
+# Пользовательские функции: рекурсия и обычные вызовы
+FUNC FACT(INT_N):
+    IF: INT_N <= 1
+        RETURN 1
+    END
+    RETURN INT_N * FACT(INT_N - 1)
+END
+
+FUNC IS_PRIME(INT_N):
+    IF: INT_N < 2
+        RETURN FALSE
+    END
+    FOR: INT_I = 2 TO INT_N - 1
+        IF: INT_N % INT_I == 0
+            RETURN FALSE
+        END
+    END
+    RETURN TRUE
+END
+
+FUNC GREET(STR_NAME):
+    RETURN "Привет, " + STR_NAME + "!"
+END
+
+PRINT: "5! = [FACT(5)]"
+PRINT: "10! = [FACT(10)]"
+PRINT: "[GREET(\"Umbrly\")]"
+
+PRINT: "Простые числа до 30:"
+FOR: INT_N = 2 TO 30
+    IF: IS_PRIME(INT_N)
+        PRINT: "  [INT_N] — простое"
+    END
+END

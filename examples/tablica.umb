@@ -1,0 +1,13 @@
+# Таблица умножения — цикл FOR
+INT_N = INPUT: "Таблица умножения на: "
+
+FOR: INT_I = 1 TO 10
+    PRINT: "[INT_N] x [INT_I] = [INT_N * INT_I]"
+END
+
+PRINT: "А теперь в обратном порядке:"
+FOR: INT_J = 10 TO 1 STEP -1
+    PRINT: "[INT_N] x [INT_J] = [INT_N * INT_J]"
+END
+
+PRINT: "Готово!"

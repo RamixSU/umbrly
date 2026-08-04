@@ -1,0 +1,140 @@
+CONSOLE_TITLE("Umbrly Breakout")
+CLS()
+
+INT_W = 40
+INT_H = 20
+
+INT_PADDLE_X = 16
+INT_PADDLE_W = 7
+
+INT_BALL_X = 20
+INT_BALL_Y = 15
+
+INT_DX = 1
+INT_DY = -1
+
+BOOL_RUNNING = TRUE
+
+ARR_BLOCKS = []
+
+FOR: INT_Y = 2 TO 5
+    FOR: INT_X = 2 TO 37 STEP 3
+        PUSH(ARR_BLOCKS, INT_X * 1000 + INT_Y)
+    END
+END
+
+FUNC BLOCK_AT(INT_X, INT_Y):
+    RETURN CONTAINS(ARR_BLOCKS, INT_X * 1000 + INT_Y)
+END
+
+# Присваивание внутри FUNC меняет только локальную копию - "ARR_BLOCKS = ARR_NEW"
+# никогда бы не обновило глобальный массив. Мутируем на месте: меняем местами с
+# последним элементом и убираем последний через POP - оба действия работают через
+# тот же shared-массив, а не через переприсваивание переменной.
+FUNC REMOVE_BLOCK(INT_X, INT_Y):
+    INT_TARGET = INT_X * 1000 + INT_Y
+    INT_IDX = INDEX_OF(ARR_BLOCKS, INT_TARGET)
+    IF: INT_IDX >= 0
+        INT_LAST = LEN(ARR_BLOCKS) - 1
+        ARR_BLOCKS[INT_IDX] = ARR_BLOCKS[INT_LAST]
+        POP(ARR_BLOCKS)
+    END
+END
+
+FUNC DRAW():
+    GOTOXY(0, 0)
+
+    FOR: INT_Y = 0 TO INT_H - 1
+
+        STR_ROW = ""
+
+        FOR: INT_X = 0 TO INT_W - 1
+
+            STR_C = " "
+
+            IF: INT_Y == 0 OR INT_Y == INT_H - 1
+                STR_C = "#"
+            END
+
+            IF: INT_X == 0 OR INT_X == INT_W - 1
+                STR_C = "#"
+            END
+
+            IF: BLOCK_AT(INT_X, INT_Y)
+                STR_C = "X"
+            END
+
+            IF: INT_X == INT_BALL_X && INT_Y == INT_BALL_Y
+                STR_C = "O"
+            END
+
+            IF: INT_Y == INT_H - 2
+                IF: INT_X >= INT_PADDLE_X && INT_X < INT_PADDLE_X + INT_PADDLE_W
+                    STR_C = "="
+                END
+            END
+
+            STR_ROW = STR_ROW + STR_C
+        END
+
+        PRINT: STR_ROW
+    END
+END
+
+WHILE: BOOL_RUNNING
+
+    IF: KEY_PRESSED(37)
+        INT_PADDLE_X = MAX(1, INT_PADDLE_X - 1)
+    END
+
+    IF: KEY_PRESSED(39)
+        INT_PADDLE_X = MIN(INT_W - INT_PADDLE_W - 1, INT_PADDLE_X + 1)
+    END
+
+    IF: KEY_PRESSED(81)
+        BREAK
+    END
+
+    INT_NEXT_X = INT_BALL_X + INT_DX
+    INT_NEXT_Y = INT_BALL_Y + INT_DY
+
+    IF: INT_NEXT_X <= 1 OR INT_NEXT_X >= INT_W - 2
+        INT_DX = -INT_DX
+    END
+
+    IF: INT_NEXT_Y <= 1
+        INT_DY = -INT_DY
+    END
+
+    IF: INT_NEXT_Y == INT_H - 2 AND INT_NEXT_X >= INT_PADDLE_X AND INT_NEXT_X < INT_PADDLE_X + INT_PADDLE_W
+        INT_DY = -1
+    END
+
+    IF: BLOCK_AT(INT_NEXT_X, INT_NEXT_Y)
+        REMOVE_BLOCK(INT_NEXT_X, INT_NEXT_Y)
+        INT_DY = -INT_DY
+    END
+
+    INT_BALL_X = INT_BALL_X + INT_DX
+    INT_BALL_Y = INT_BALL_Y + INT_DY
+
+    IF: INT_BALL_Y >= INT_H - 1
+        BOOL_RUNNING = FALSE
+    END
+
+    DRAW()
+
+    IF: LEN(ARR_BLOCKS) == 0
+        BOOL_RUNNING = FALSE
+    END
+
+    SLEEP(40)
+END
+
+CLS()
+
+IF: LEN(ARR_BLOCKS) == 0
+    PRINT: "YOU WIN!"
+ELSE:
+    PRINT: "GAME OVER"
+END

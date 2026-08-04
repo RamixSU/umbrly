@@ -1,0 +1,7 @@
+STR_TEXT = ""
+INT_I = 0
+WHILE: INT_I < 500000
+    STR_TEXT = "item-[INT_I]-value"
+    INT_I = INT_I + 1
+END
+PRINT: STR_TEXT

@@ -1,0 +1,38 @@
+# Бенчмарк интерпретатора. Проверяет как раз то, что раньше было медленным:
+# - PRINT с подстановкой [выражение] внутри цикла (интерполяция строк)
+# - CONTINUE на каждой итерации (проверка сигналов вместо C++ исключений)
+# - рекурсивный вызов функции
+
+FLOAT_T0 = CLOCK()
+
+INT_SUM = 0
+FOR: INT_I = 1 TO 300000
+    IF: INT_I % 2 == 0
+        CONTINUE
+    END
+    INT_SUM = INT_SUM + INT_I
+END
+FLOAT_T1 = CLOCK()
+PRINT: "Цикл 300000 c CONTINUE и интерполяцией: [FLOAT_T1 - FLOAT_T0] сек, сумма нечётных = [INT_SUM]"
+
+FUNC FIB(INT_N):
+    IF: INT_N < 2
+        RETURN INT_N
+    END
+    RETURN FIB(INT_N - 1) + FIB(INT_N - 2)
+END
+
+FLOAT_T2 = CLOCK()
+INT_F = FIB(27)
+FLOAT_T3 = CLOCK()
+PRINT: "FIB(27) рекурсивно = [INT_F] за [FLOAT_T3 - FLOAT_T2] сек"
+
+STR_MSG = "строка с подстановкой [INT_I] внутри"
+FLOAT_T4 = CLOCK()
+INT_K = 0
+WHILE: INT_K < 200000
+    STR_MSG = "x [INT_K] y"
+    INT_K = INT_K + 1
+END
+FLOAT_T5 = CLOCK()
+PRINT: "200000 переприсваиваний строки с подстановкой: [FLOAT_T5 - FLOAT_T4] сек"

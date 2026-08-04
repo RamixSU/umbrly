@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Umbrly — интерпретируемый язык для Windows</title>
+<meta name="description" content="Umbrly — интерпретируемый язык программирования для Windows. Команды с двоеточием, тип переменной — это её имя, 71 встроенная функция, включая обёртки над WinAPI.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Перейти к содержимому</a>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="wordmark" href="#top"><span class="wordmark-glyph" aria-hidden="true">&gt;_</span>UMBRLY</a>
+    <nav class="topnav" aria-label="Разделы страницы">
+      <a href="#syntax">Синтаксис</a>
+      <a href="#control">Конструкции</a>
+      <a href="#functions">Функции</a>
+      <a href="#case">PATH Doctor</a>
+      <a href="#start">Быстрый старт</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+
+  <section id="top" class="hero">
+    <div class="hero-inner">
+      <div class="console-window" id="hero-console">
+        <div class="console-titlebar">
+          <span class="console-title"><span aria-hidden="true">&gt;_</span> C:\projects\umbrly\umbrly.exe</span>
+          <span class="console-controls" aria-hidden="true">
+            <span class="ctl">&#9472;</span><span class="ctl">&#9633;</span><span class="ctl ctl-close">&times;</span>
+          </span>
+        </div>
+        <pre class="console-body" id="hero-body" aria-label="Пример выполнения программы Umbrly"></pre>
+      </div>
+
+      <div class="hero-side">
+        <h1 class="hero-title">Язык, который выглядит как консоль —<br>потому что она и есть консоль.</h1>
+        <p class="hero-lede">
+          Umbrly — интерпретируемый язык для Windows. Тип переменной — это её имя
+          (<code>INT_</code>, <code>STR_</code>, <code>ARR_</code>…), команды заканчиваются
+          двоеточием, а треть из 71 встроенной функции — прямые обёртки над WinAPI.
+        </p>
+        <div class="hero-actions">
+          <button class="cmd-chip" type="button" data-copy="build.bat">
+            <span class="cmd-prompt" aria-hidden="true">&gt;</span><span class="cmd-text">build.bat</span>
+            <span class="cmd-copy">копировать</span>
+          </button>
+          <button class="cmd-chip" type="button" data-copy="umbrly.exe examples\hello.umb">
+            <span class="cmd-prompt" aria-hidden="true">&gt;</span><span class="cmd-text">umbrly.exe examples\hello.umb</span>
+            <span class="cmd-copy">копировать</span>
+          </button>
+        </div>
+        <p class="hero-meta">Один .exe. Ноль внешних зависимостей. Модульная сборка: лексер → парсер → AST → интерпретатор.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="syntax" class="section">
+    <h2 class="section-title"><span class="section-num">01</span> Синтаксис за минуту</h2>
+    <div class="syntax-grid">
+      <pre class="code-panel"><code><span data-tag="kw">FUNC</span> IS_EVEN(<span data-tag="type">INT_N</span>):
+    <span data-tag="kw">RETURN</span> <span data-tag="type">INT_N</span> % 2 == 0
+<span data-tag="kw">END</span>
+
+<span data-tag="type">INT_X</span> = <span data-tag="io">INPUT:</span> "Введите число: "
+<span data-tag="kw">IF:</span> IS_EVEN(<span data-tag="type">INT_X</span>)
+    <span data-tag="io">PRINT:</span> "<span data-tag="interp">[INT_X]</span> — чётное"
+<span data-tag="kw">ELSE:</span>
+    <span data-tag="io">PRINT:</span> "<span data-tag="interp">[INT_X]</span> — нечётное"
+<span data-tag="kw">END</span></code></pre>
+
+      <ul class="annotations">
+        <li class="annotation" data-target="kw" tabindex="0">
+          <span class="annotation-swatch" data-swatch="kw"></span>
+          <span class="annotation-body"><strong>FUNC / IF / ELSE / END</strong> — границы структуры. Отступы — для человека, не для интерпретатора: закрывает блок именно ключевое слово END.</span>
+        </li>
+        <li class="annotation" data-target="io" tabindex="0">
+          <span class="annotation-swatch" data-swatch="io"></span>
+          <span class="annotation-body"><strong>PRINT: / INPUT:</strong> — команды ввода-вывода. После двоеточия — аргумент: строка, выражение или ничего.</span>
+        </li>
+        <li class="annotation" data-target="type" tabindex="0">
+          <span class="annotation-swatch" data-swatch="type"></span>
+          <span class="annotation-body"><strong>INT_N, INT_X</strong> — тип переменной прямо в имени. Отдельного объявления типа не существует в принципе.</span>
+        </li>
+        <li class="annotation" data-target="interp" tabindex="0">
+          <span class="annotation-swatch" data-swatch="interp"></span>
+          <span class="annotation-body"><strong>[INT_X]</strong> — подстановка внутри строки. Внутри скобок — полноценное выражение, вычисляется в момент вывода.</span>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="control" class="section">
+    <h2 class="section-title"><span class="section-num">02</span> Конструкции языка</h2>
+    <div class="control-grid">
+
+      <article class="control-card">
+        <h3>Условие</h3>
+        <pre><code>IF: INT_X > 10
+    PRINT: "большое"
+ELSE:
+    PRINT: "маленькое"
+END</code></pre>
+        <p>ELSE необязателен, блоки вкладываются друг в друга.</p>
+      </article>
+
+      <article class="control-card">
+        <h3>Цикл WHILE</h3>
+        <pre><code>WHILE: INT_I < 5
+    PRINT: "[INT_I]"
+    INT_I = INT_I + 1
+END</code></pre>
+        <p>BREAK и CONTINUE работают как в любом C-подобном языке.</p>
+      </article>
+
+      <article class="control-card">
+        <h3>Цикл FOR</h3>
+        <pre><code>FOR: INT_I = 10 TO 1 STEP -1
+    PRINT: "[INT_I]"
+END</code></pre>
+        <p>Границы включительны, TO обязателен, STEP — нет (по умолчанию 1).</p>
+      </article>
+
+      <article class="control-card">
+        <h3>Массивы</h3>
+        <pre><code>ARR_XS = [10, 20, 30]
+PUSH(ARR_XS, 40)
+PRINT: "[ARR_XS[0]] / [LEN(ARR_XS)]"</code></pre>
+        <p>Индексация с нуля; присваивание по индексу — ARR_XS[i] = ...</p>
+      </article>
+
+      <article class="control-card">
+        <h3>Функции</h3>
+        <pre><code>FUNC FACT(INT_N):
+    IF: INT_N <= 1
+        RETURN 1
+    END
+    RETURN INT_N * FACT(INT_N - 1)
+END</code></pre>
+        <p>Рекурсия работает; функции регистрируются заранее — вызов «вперёд» по коду допустим.</p>
+      </article>
+
+      <article class="control-card">
+        <h3>Ошибки</h3>
+        <pre><code>TRY:
+    INT_X = TOINT("не число")
+CATCH: STR_ERR
+    PRINT: "Поймали: [STR_ERR]"
+END</code></pre>
+        <p>Ошибка не роняет программу, если её явно ждут.</p>
+      </article>
+
+    </div>
+  </section>
+
+  <section id="functions" class="section">
+    <h2 class="section-title"><span class="section-num">03</span> 71 встроенная функция</h2>
+    <p class="section-lede">Треть — прямые обёртки над WinAPI: диалоги, консоль, файлы, буфер обмена, процессы. Полный список — в исходниках интерпретатора, здесь он весь целиком.</p>
+
+    <div class="func-groups">
+      <div class="func-group">
+        <h3>Математика</h3>
+        <p class="func-chips">SQRT · POW · ABS · MIN · MAX · FLOOR · CEIL · ROUND · RANDOM · RANDOM_FLOAT</p>
+      </div>
+      <div class="func-group">
+        <h3>Строки</h3>
+        <p class="func-chips">LEN · UPPER · LOWER · TRIM · SUBSTR · FIND · REPLACE · SPLIT · JOIN · CHR · ASC</p>
+      </div>
+      <div class="func-group">
+        <h3>Массивы</h3>
+        <p class="func-chips">PUSH · POP · CONTAINS · INDEX_OF · REVERSE · SORT · RANGE</p>
+      </div>
+      <div class="func-group">
+        <h3>Типы</h3>
+        <p class="func-chips">TOINT · TOFLOAT · TOSTR · TOBOOL · TYPEOF</p>
+      </div>
+      <div class="func-group">
+        <h3><span class="winapi-tag">WinAPI</span> Диалоги</h3>
+        <p class="func-chips">MSGBOX · CONFIRM</p>
+      </div>
+      <div class="func-group">
+        <h3><span class="winapi-tag">WinAPI</span> Звук и время</h3>
+        <p class="func-chips">BEEP · SLEEP · PLAY_SOUND · TICK_COUNT · TIME_NOW</p>
+      </div>
+      <div class="func-group">
+        <h3><span class="winapi-tag">WinAPI</span> Консоль</h3>
+        <p class="func-chips">CLS · COLOR · COLOR_RESET · GOTOXY · CONSOLE_TITLE</p>
+      </div>
+      <div class="func-group">
+        <h3><span class="winapi-tag">WinAPI</span> Клавиатура и мышь</h3>
+        <p class="func-chips">GETKEY · KEY_PRESSED · MOUSE_X · MOUSE_Y · SET_MOUSE_POS · CLICK_MOUSE</p>
+      </div>
+      <div class="func-group">
+        <h3><span class="winapi-tag">WinAPI</span> Буфер обмена</h3>
+        <p class="func-chips">CLIPBOARD_SET · CLIPBOARD_GET</p>
+      </div>
+      <div class="func-group">
+        <h3><span class="winapi-tag">WinAPI</span> Файлы и папки</h3>
+        <p class="func-chips">FILE_READ · FILE_WRITE · FILE_APPEND · FILE_EXISTS · FILE_DELETE · DIR_EXISTS · DIR_CREATE</p>
+      </div>
+      <div class="func-group">
+        <h3><span class="winapi-tag">WinAPI</span> Система</h3>
+        <p class="func-chips">ENV_GET · ENV_SET · COMPUTER_NAME · USER_NAME · SCREEN_WIDTH · SCREEN_HEIGHT</p>
+      </div>
+      <div class="func-group">
+        <h3><span class="winapi-tag">WinAPI</span> Окна и процессы</h3>
+        <p class="func-chips">FIND_WINDOW · ACTIVATE_WINDOW · SHELL_OPEN · RUN · EXIT</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="case" class="section">
+    <h2 class="section-title"><span class="section-num">04</span> Не игрушка: PATH Doctor</h2>
+    <div class="case-grid">
+      <div class="case-text">
+        <p>
+          <code>path_doctor.umb</code> — рабочий скрипт на Umbrly, не демо. Он читает переменную
+          окружения <code>PATH</code>, разбивает её на записи и для каждой проверяет, существует
+          ли папка ещё на диске. Программы удаляют, переустанавливают, путь захламляется —
+          а Windows перебирает все эти записи по порядку при запуске любой команды.
+        </p>
+        <p>
+          Скрипт ничего не удаляет и не правит: только показывает битые пути и дубликаты,
+          красит вывод через <code>COLOR()</code> и сохраняет отчёт файлом через
+          <code>FILE_WRITE()</code>. Реальный прогон на рабочей машине:
+        </p>
+      </div>
+      <pre class="console-window case-console" aria-label="Вывод path_doctor.umb"><code><span class="c-ok">[OK]        </span>C:\Windows\System32
+<span class="c-miss">[НЕ НАЙДЕН] </span>C:\Users\dev\bin
+<span class="c-dup">[ДУБЛИКАТ]  </span>C:\Program Files\Git\mingw64\bin
+<span class="c-ok">[OK]        </span>C:\Program Files\nodejs
+<span class="c-miss">[НЕ НАЙДЕН] </span>C:\Users\dev\.dotnet\tools
+<span class="c-ok">[OK]        </span>C:\Users\dev\.cargo\bin
+
+Итого: 42 записей -- рабочих: 27, битых: 8, дублей: 7, пустых: 0</code></pre>
+    </div>
+  </section>
+
+  <section id="start" class="section">
+    <h2 class="section-title"><span class="section-num">05</span> Быстрый старт</h2>
+    <ol class="steps">
+      <li class="step">
+        <span class="step-num">1</span>
+        <div class="step-body">
+          <p>Соберите интерпретатор — нужен g++ (MinGW-w64 / MSYS2)</p>
+          <div class="terminal-line"><span class="cmd-prompt" aria-hidden="true">&gt;</span> build.bat</div>
+        </div>
+      </li>
+      <li class="step">
+        <span class="step-num">2</span>
+        <div class="step-body">
+          <p>Запустите готовый пример</p>
+          <div class="terminal-line"><span class="cmd-prompt" aria-hidden="true">&gt;</span> umbrly.exe examples\hello.umb</div>
+        </div>
+      </li>
+      <li class="step">
+        <span class="step-num">3</span>
+        <div class="step-body">
+          <p>Или откройте интерактивный REPL</p>
+          <div class="terminal-line"><span class="cmd-prompt" aria-hidden="true">&gt;</span> umbrly.exe</div>
+        </div>
+      </li>
+    </ol>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <p>Umbrly 2.0 — учебный интерпретатор на C++17. Лексер → парсер → AST → дерево-исполнитель. Ноль внешних зависимостей в самом языке.</p>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>

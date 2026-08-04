@@ -1,0 +1,3 @@
+C:/Users/Ramix/Downloads/bgbg/android/app/.cxx/Debug/pa575i4c/x86/CMakeFiles/umbrly_android.dir
+C:/Users/Ramix/Downloads/bgbg/android/app/.cxx/Debug/pa575i4c/x86/CMakeFiles/edit_cache.dir
+C:/Users/Ramix/Downloads/bgbg/android/app/.cxx/Debug/pa575i4c/x86/CMakeFiles/rebuild_cache.dir

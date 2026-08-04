@@ -1,0 +1,32 @@
+[
+{
+  "directory": "C:/Users/Ramix/Downloads/bgbg/android/app/.cxx/Debug/pa575i4c/armeabi-v7a",
+  "command": "C:\\Users\\Ramix\\AppData\\Local\\Android\\Sdk\\ndk\\28.2.13676358\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\clang++.exe --target=armv7-none-linux-androideabi23 --sysroot=C:/Users/Ramix/AppData/Local/Android/Sdk/ndk/28.2.13676358/toolchains/llvm/prebuilt/windows-x86_64/sysroot -Dumbrly_android_EXPORTS -IC:/Users/Ramix/Downloads/bgbg/android/app/src/main/cpp/../../../../../include -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -march=armv7-a -mthumb -Wformat -Werror=format-security  -std=c++17 -fexceptions -frtti -fno-limit-debug-info  -fPIC -o CMakeFiles\\umbrly_android.dir\\android_runner.cpp.o -c C:\\Users\\Ramix\\Downloads\\bgbg\\android\\app\\src\\main\\cpp\\android_runner.cpp",
+  "file": "C:\\Users\\Ramix\\Downloads\\bgbg\\android\\app\\src\\main\\cpp\\android_runner.cpp"
+},
+{
+  "directory": "C:/Users/Ramix/Downloads/bgbg/android/app/.cxx/Debug/pa575i4c/armeabi-v7a",
+  "command": "C:\\Users\\Ramix\\AppData\\Local\\Android\\Sdk\\ndk\\28.2.13676358\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\clang++.exe --target=armv7-none-linux-androideabi23 --sysroot=C:/Users/Ramix/AppData/Local/Android/Sdk/ndk/28.2.13676358/toolchains/llvm/prebuilt/windows-x86_64/sysroot -Dumbrly_android_EXPORTS -IC:/Users/Ramix/Downloads/bgbg/android/app/src/main/cpp/../../../../../include -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -march=armv7-a -mthumb -Wformat -Werror=format-security  -std=c++17 -fexceptions -frtti -fno-limit-debug-info  -fPIC -o CMakeFiles\\umbrly_android.dir\\C_\\Users\\Ramix\\Downloads\\bgbg\\src\\lexer.cpp.o -c C:\\Users\\Ramix\\Downloads\\bgbg\\src\\lexer.cpp",
+  "file": "C:\\Users\\Ramix\\Downloads\\bgbg\\src\\lexer.cpp"
+},
+{
+  "directory": "C:/Users/Ramix/Downloads/bgbg/android/app/.cxx/Debug/pa575i4c/armeabi-v7a",
+  "command": "C:\\Users\\Ramix\\AppData\\Local\\Android\\Sdk\\ndk\\28.2.13676358\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\clang++.exe --target=armv7-none-linux-androideabi23 --sysroot=C:/Users/Ramix/AppData/Local/Android/Sdk/ndk/28.2.13676358/toolchains/llvm/prebuilt/windows-x86_64/sysroot -Dumbrly_android_EXPORTS -IC:/Users/Ramix/Downloads/bgbg/android/app/src/main/cpp/../../../../../include -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -march=armv7-a -mthumb -Wformat -Werror=format-security  -std=c++17 -fexceptions -frtti -fno-limit-debug-info  -fPIC -o CMakeFiles\\umbrly_android.dir\\C_\\Users\\Ramix\\Downloads\\bgbg\\src\\parser.cpp.o -c C:\\Users\\Ramix\\Downloads\\bgbg\\src\\parser.cpp",
+  "file": "C:\\Users\\Ramix\\Downloads\\bgbg\\src\\parser.cpp"
+},
+{
+  "directory": "C:/Users/Ramix/Downloads/bgbg/android/app/.cxx/Debug/pa575i4c/armeabi-v7a",
+  "command": "C:\\Users\\Ramix\\AppData\\Local\\Android\\Sdk\\ndk\\28.2.13676358\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\clang++.exe --target=armv7-none-linux-androideabi23 --sysroot=C:/Users/Ramix/AppData/Local/Android/Sdk/ndk/28.2.13676358/toolchains/llvm/prebuilt/windows-x86_64/sysroot -Dumbrly_android_EXPORTS -IC:/Users/Ramix/Downloads/bgbg/android/app/src/main/cpp/../../../../../include -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -march=armv7-a -mthumb -Wformat -Werror=format-security  -std=c++17 -fexceptions -frtti -fno-limit-debug-info  -fPIC -o CMakeFiles\\umbrly_android.dir\\C_\\Users\\Ramix\\Downloads\\bgbg\\src\\ast.cpp.o -c C:\\Users\\Ramix\\Downloads\\bgbg\\src\\ast.cpp",
+  "file": "C:\\Users\\Ramix\\Downloads\\bgbg\\src\\ast.cpp"
+},
+{
+  "directory": "C:/Users/Ramix/Downloads/bgbg/android/app/.cxx/Debug/pa575i4c/armeabi-v7a",
+  "command": "C:\\Users\\Ramix\\AppData\\Local\\Android\\Sdk\\ndk\\28.2.13676358\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\clang++.exe --target=armv7-none-linux-androideabi23 --sysroot=C:/Users/Ramix/AppData/Local/Android/Sdk/ndk/28.2.13676358/toolchains/llvm/prebuilt/windows-x86_64/sysroot -Dumbrly_android_EXPORTS -IC:/Users/Ramix/Downloads/bgbg/android/app/src/main/cpp/../../../../../include -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -march=armv7-a -mthumb -Wformat -Werror=format-security  -std=c++17 -fexceptions -frtti -fno-limit-debug-info  -fPIC -o CMakeFiles\\umbrly_android.dir\\C_\\Users\\Ramix\\Downloads\\bgbg\\src\\interpreter.cpp.o -c C:\\Users\\Ramix\\Downloads\\bgbg\\src\\interpreter.cpp",
+  "file": "C:\\Users\\Ramix\\Downloads\\bgbg\\src\\interpreter.cpp"
+},
+{
+  "directory": "C:/Users/Ramix/Downloads/bgbg/android/app/.cxx/Debug/pa575i4c/armeabi-v7a",
+  "command": "C:\\Users\\Ramix\\AppData\\Local\\Android\\Sdk\\ndk\\28.2.13676358\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\clang++.exe --target=armv7-none-linux-androideabi23 --sysroot=C:/Users/Ramix/AppData/Local/Android/Sdk/ndk/28.2.13676358/toolchains/llvm/prebuilt/windows-x86_64/sysroot -Dumbrly_android_EXPORTS -IC:/Users/Ramix/Downloads/bgbg/android/app/src/main/cpp/../../../../../include -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -march=armv7-a -mthumb -Wformat -Werror=format-security  -std=c++17 -fexceptions -frtti -fno-limit-debug-info  -fPIC -o CMakeFiles\\umbrly_android.dir\\C_\\Users\\Ramix\\Downloads\\bgbg\\src\\builtins.cpp.o -c C:\\Users\\Ramix\\Downloads\\bgbg\\src\\builtins.cpp",
+  "file": "C:\\Users\\Ramix\\Downloads\\bgbg\\src\\builtins.cpp"
+}
+]

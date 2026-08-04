@@ -1,0 +1,27 @@
+apply plugin: "com.android.application"
+
+android {
+    namespace "com.umbrly.sandbox"
+    compileSdk 35
+
+    defaultConfig {
+        applicationId "com.umbrly.sandbox"
+        minSdk 23
+        targetSdk 35
+        versionCode 1
+        versionName "0.1"
+
+        externalNativeBuild {
+            cmake {
+                cppFlags "-std=c++17 -fexceptions -frtti"
+            }
+        }
+    }
+
+    externalNativeBuild {
+        cmake {
+            path "src/main/cpp/CMakeLists.txt"
+            version "3.22.1"
+        }
+    }
+}

@@ -1,0 +1,80 @@
+{
+  "name": "umbrly-language",
+  "displayName": "Umbrly Language Support",
+  "description": "Подсветка синтаксиса (включая классы CLASS/SELF), автодополнение, подсказки при наведении и параметрах, сниппеты и иконка файла для языка Umbrly (.umb)",
+  "version": "0.2.0",
+  "publisher": "umbrly-lang",
+  "private": true,
+  "engines": {
+    "vscode": "^1.75.0"
+  },
+  "categories": ["Programming Languages", "Snippets"],
+  "main": "./src/extension.js",
+  "activationEvents": ["onLanguage:umbrly", "onCommand:umbrly.runFile"],
+  "contributes": {
+    "languages": [
+      {
+        "id": "umbrly",
+        "aliases": ["Umbrly", "umbrly"],
+        "extensions": [".umb"],
+        "configuration": "./language-configuration.json",
+        "icon": {
+          "light": "./icons/umbrella-light.svg",
+          "dark": "./icons/umbrella-dark.svg"
+        }
+      }
+    ],
+    "grammars": [
+      {
+        "language": "umbrly",
+        "scopeName": "source.umbrly",
+        "path": "./syntaxes/umbrly.tmLanguage.json"
+      }
+    ],
+    "snippets": [
+      {
+        "language": "umbrly",
+        "path": "./snippets/umbrly.code-snippets"
+      }
+    ],
+    "commands": [
+      {
+        "command": "umbrly.runFile",
+        "title": "Umbrly: запустить файл",
+        "icon": "$(play)"
+      }
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "command": "umbrly.runFile",
+          "when": "resourceLangId == umbrly",
+          "group": "navigation@1"
+        }
+      ],
+      "editor/title/context": [
+        {
+          "command": "umbrly.runFile",
+          "when": "resourceLangId == umbrly"
+        }
+      ]
+    },
+    "keybindings": [
+      {
+        "command": "umbrly.runFile",
+        "key": "ctrl+f5",
+        "when": "resourceLangId == umbrly"
+      }
+    ],
+    "configuration": {
+      "title": "Umbrly",
+      "properties": {
+        "umbrly.interpreterPath": {
+          "type": "string",
+          "default": "umbrly.exe",
+          "description": "Путь к интерпретатору umbrly.exe. Можно указать: имя команды (если она есть в PATH), путь относительно корня открытой папки, либо абсолютный путь."
+        }
+      }
+    }
+  }
+}

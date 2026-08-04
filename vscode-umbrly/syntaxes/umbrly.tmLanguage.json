@@ -1,0 +1,109 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "Umbrly",
+  "scopeName": "source.umbrly",
+  "fileTypes": ["umb"],
+  "patterns": [
+    { "include": "#comments" },
+    { "include": "#strings" },
+    { "include": "#numbers" },
+    { "include": "#class-declaration" },
+    { "include": "#keywords" },
+    { "include": "#constants" },
+    { "include": "#typed-variables" },
+    { "include": "#builtin-functions" },
+    { "include": "#function-calls" },
+    { "include": "#operators" },
+    { "include": "#punctuation" }
+  ],
+  "repository": {
+    "comments": {
+      "patterns": [
+        { "name": "comment.line.number-sign.umbrly", "match": "#.*$" },
+        { "name": "comment.line.double-slash.umbrly", "match": "//.*$" }
+      ]
+    },
+    "strings": {
+      "name": "string.quoted.double.umbrly",
+      "begin": "\"",
+      "end": "\"",
+      "patterns": [
+        { "name": "constant.character.escape.umbrly", "match": "\\\\." },
+        {
+          "name": "meta.interpolation.umbrly",
+          "begin": "\\[",
+          "end": "\\]",
+          "beginCaptures": { "0": { "name": "punctuation.section.interpolation.begin.umbrly" } },
+          "endCaptures": { "0": { "name": "punctuation.section.interpolation.end.umbrly" } },
+          "patterns": [
+            { "include": "#numbers" },
+            { "include": "#constants" },
+            { "include": "#typed-variables" },
+            { "include": "#builtin-functions" },
+            { "include": "#function-calls" },
+            { "include": "#operators" },
+            { "include": "#punctuation" }
+          ]
+        }
+      ]
+    },
+    "numbers": {
+      "name": "constant.numeric.umbrly",
+      "match": "\\b\\d+(\\.\\d+)?\\b"
+    },
+    "class-declaration": {
+      "match": "\\b(CLASS)\\s+([A-Za-z_][A-Za-z0-9_]*)",
+      "captures": {
+        "1": { "name": "keyword.control.class.umbrly" },
+        "2": { "name": "entity.name.class.umbrly" }
+      }
+    },
+    "keywords": {
+      "patterns": [
+        {
+          "name": "keyword.control.umbrly",
+          "match": "\\b(PRINT|INPUT|IF|ELSE|WHILE|FOR|TO|STEP|FUNC|RETURN|BREAK|CONTINUE|TRY|CATCH|END|LOAD)\\b"
+        },
+        {
+          "name": "keyword.control.class.umbrly",
+          "match": "\\b(CLASS)\\b"
+        },
+        {
+          "name": "variable.language.self.umbrly",
+          "match": "\\bSELF\\b"
+        },
+        {
+          "name": "keyword.operator.logical.umbrly",
+          "match": "\\b(AND|OR|NOT)\\b"
+        }
+      ]
+    },
+    "constants": {
+      "name": "constant.language.umbrly",
+      "match": "\\b(TRUE|FALSE|NIL)\\b"
+    },
+    "typed-variables": {
+      "match": "\\b(INT|FLOAT|STR|BOOL|ARR|OBJ)(_[A-Za-z0-9_]*)\\b",
+      "captures": {
+        "1": { "name": "storage.type.umbrly" },
+        "2": { "name": "variable.other.umbrly" }
+      }
+    },
+    "builtin-functions": {
+      "name": "support.function.umbrly",
+      "match": "\\b(SQRT|POW|ABS|MIN|MAX|FLOOR|CEIL|ROUND|RANDOM|RANDOM_FLOAT|SIN|COS|TAN|ASIN|ACOS|ATAN|ATAN2|HYPOT|LOG|LOG10|EXP|SIGN|CLAMP|LERP|GCD|LCM|PI|LEN|UPPER|LOWER|TRIM|SUBSTR|FIND|REPLACE|SPLIT|JOIN|CHR|ASC|STARTS_WITH|ENDS_WITH|REPEAT|PAD_LEFT|PAD_RIGHT|STR_REVERSE|COUNT|PUSH|POP|CONTAINS|INDEX_OF|REVERSE|SORT|RANGE|COPY|SLICE|SUM|ARR_MIN|ARR_MAX|TOINT|TOFLOAT|TOSTR|TOBOOL|TYPEOF|MSGBOX|CONFIRM|BEEP|SLEEP|PLAY_SOUND|TICK_COUNT|TIME_NOW|CLS|COLOR|COLOR_RESET|GOTOXY|CONSOLE_TITLE|GETKEY|KEY_PRESSED|MOUSE_X|MOUSE_Y|SET_MOUSE_POS|CLICK_MOUSE|CLIPBOARD_SET|CLIPBOARD_GET|FILE_READ|FILE_WRITE|FILE_APPEND|FILE_EXISTS|FILE_DELETE|DIR_EXISTS|DIR_CREATE|ENV_GET|ENV_SET|COMPUTER_NAME|USER_NAME|SCREEN_WIDTH|SCREEN_HEIGHT|FIND_WINDOW|ACTIVATE_WINDOW|SHELL_OPEN|RUN|EXIT|CLOCK|CPU_COUNT)\\b(?=\\s*\\()"
+    },
+    "function-calls": {
+      "name": "entity.name.function.umbrly",
+      "match": "\\b([A-Za-z_][A-Za-z0-9_]*)\\b(?=\\s*\\()"
+    },
+    "operators": {
+      "name": "keyword.operator.umbrly",
+      "match": "==|!=|<=|>=|&&|\\|\\||[+\\-*/%<>=!]"
+    },
+    "punctuation": {
+      "name": "punctuation.umbrly",
+      "match": "[()\\[\\],:]"
+    }
+  }
+}

@@ -1,0 +1,9 @@
+FUNC SUM_TO(INT_N):
+    INT_SUM = 0
+    WHILE: INT_N > 0
+        INT_SUM = INT_SUM + INT_N
+        INT_N = INT_N - 1
+    END
+    RETURN INT_SUM
+END
+PRINT: SUM_TO(1000)

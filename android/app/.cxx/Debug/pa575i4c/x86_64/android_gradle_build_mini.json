@@ -1,0 +1,27 @@
+{
+  "buildFiles": [
+    "C:\\Users\\Ramix\\Downloads\\bgbg\\android\\app\\src\\main\\cpp\\CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "C:\\Users\\Ramix\\AppData\\Local\\Android\\Sdk\\cmake\\3.22.1\\bin\\ninja.exe",
+      "-C",
+      "C:\\Users\\Ramix\\Downloads\\bgbg\\android\\app\\.cxx\\Debug\\pa575i4c\\x86_64",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "C:\\Users\\Ramix\\AppData\\Local\\Android\\Sdk\\cmake\\3.22.1\\bin\\ninja.exe",
+    "-C",
+    "C:\\Users\\Ramix\\Downloads\\bgbg\\android\\app\\.cxx\\Debug\\pa575i4c\\x86_64",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {
+    "umbrly_android::@6890427a1f51a3e7e1df": {
+      "artifactName": "umbrly_android",
+      "abi": "x86_64",
+      "output": "C:\\Users\\Ramix\\Downloads\\bgbg\\android\\app\\build\\intermediates\\cxx\\Debug\\pa575i4c\\obj\\x86_64\\libumbrly_android.so",
+      "runtimeFiles": []
+    }
+  }
+}

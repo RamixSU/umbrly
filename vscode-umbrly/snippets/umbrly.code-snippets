@@ -1,0 +1,57 @@
+{
+  "IF": {
+    "prefix": "if",
+    "body": ["IF: ${1:условие}", "\t${0}", "END"],
+    "description": "IF: ... END"
+  },
+  "IF/ELSE": {
+    "prefix": "ifelse",
+    "body": ["IF: ${1:условие}", "\t${2}", "ELSE:", "\t${0}", "END"],
+    "description": "IF: ... ELSE: ... END"
+  },
+  "WHILE": {
+    "prefix": "while",
+    "body": ["WHILE: ${1:условие}", "\t${0}", "END"],
+    "description": "WHILE: ... END"
+  },
+  "FOR": {
+    "prefix": "for",
+    "body": ["FOR: INT_${1:i} = ${2:0} TO ${3:10}", "\t${0}", "END"],
+    "description": "FOR: ИМЯ = от TO до END"
+  },
+  "FOR STEP": {
+    "prefix": "forstep",
+    "body": ["FOR: INT_${1:i} = ${2:10} TO ${3:1} STEP ${4:-1}", "\t${0}", "END"],
+    "description": "FOR: ... TO ... STEP ... END"
+  },
+  "FUNC": {
+    "prefix": "func",
+    "body": ["FUNC ${1:NAME}(${2:INT_X}):", "\t${0}", "\tRETURN ${3:NIL}", "END"],
+    "description": "FUNC ... RETURN ... END"
+  },
+  "TRY/CATCH": {
+    "prefix": "try",
+    "body": ["TRY:", "\t${1}", "CATCH: STR_${2:ERR}", "\t${0}", "END"],
+    "description": "TRY: ... CATCH: ... END"
+  },
+  "PRINT": {
+    "prefix": "print",
+    "body": "PRINT: \"${0}\"",
+    "description": "PRINT: \"...\""
+  },
+  "INPUT (переменная)": {
+    "prefix": "input",
+    "body": "${1:INT_X} = INPUT: \"${2:Введите значение: }\"",
+    "description": "ИМЯ = INPUT: \"приглашение\""
+  },
+  "CLASS": {
+    "prefix": "class",
+    "body": ["CLASS ${1:Name}:", "\t${2:STR_FIELD} = ${3:\"\"}", "", "\tFUNC INIT(${4:STR_ARG}):", "\t\tSELF.${2:STR_FIELD} = ${4:STR_ARG}", "\t${0}", "\tEND", "END"],
+    "description": "CLASS ... FUNC INIT ... END"
+  },
+  "METHOD": {
+    "prefix": "method",
+    "body": ["FUNC ${1:NAME}(${2}):", "\t${0}", "END"],
+    "description": "FUNC-метод внутри тела CLASS"
+  }
+}

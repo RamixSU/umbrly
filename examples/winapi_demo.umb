@@ -1,0 +1,25 @@
+# Демонстрация функций-обёрток над WinAPI
+PRINT: "Компьютер: [COMPUTER_NAME()], пользователь: [USER_NAME()]"
+PRINT: "Экран: [SCREEN_WIDTH()]x[SCREEN_HEIGHT()] пикселей"
+PRINT: "Текущее время: [TIME_NOW()]"
+
+CONSOLE_TITLE("Umbrly — демонстрация WinAPI")
+
+COLOR(11, 0)
+PRINT: "Этот текст — голубой на чёрном фоне"
+COLOR_RESET()
+
+FILE_WRITE("winapi_demo_output.txt", "Строка из Umbrly\n")
+PRINT: "Записан файл, содержимое: [FILE_READ(\"winapi_demo_output.txt\")]"
+FILE_DELETE("winapi_demo_output.txt")
+
+BEEP(600, 150)
+SLEEP(100)
+BEEP(900, 150)
+
+BOOL_YES = CONFIRM("Показать окно с сообщением MessageBox?", "Umbrly")
+IF: BOOL_YES
+    MSGBOX("Привет из Umbrly! Это MessageBoxW через WinAPI.", "Umbrly")
+END
+
+PRINT: "Готово. INT-код возврата RUN(\"cmd /c exit 3\") = [RUN(\"cmd /c exit 3\")]"

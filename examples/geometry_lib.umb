@@ -1,0 +1,11 @@
+# examples/geometry_lib.umb — локальный (не стандартный) модуль: лежит рядом
+# со скриптом, который его подключает (examples/imports_demo.umb), а не в
+# lib/. Показывает, что LOAD ищет модуль сначала рядом с самим файлом.
+
+FUNC CIRCLE_AREA(FLOAT_R):
+    RETURN PI() * FLOAT_R * FLOAT_R
+END
+
+FUNC RECT_AREA(FLOAT_W, FLOAT_H):
+    RETURN FLOAT_W * FLOAT_H
+END

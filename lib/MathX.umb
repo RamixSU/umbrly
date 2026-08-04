@@ -1,0 +1,21 @@
+# lib/MathX.umb — стандартная библиотека Umbrly, доступная из любого файла
+# через "LOAD MathX" (разрешается рядом с umbrly.exe, в подпапке lib/).
+
+FUNC AVG(ARR_XS):
+    IF: LEN(ARR_XS) == 0
+        RETURN 0
+    END
+    RETURN SUM(ARR_XS) / LEN(ARR_XS)
+END
+
+FUNC IS_PRIME(INT_N):
+    IF: INT_N < 2
+        RETURN FALSE
+    END
+    FOR: INT_I = 2 TO FLOOR(SQRT(INT_N))
+        IF: INT_N % INT_I == 0
+            RETURN FALSE
+        END
+    END
+    RETURN TRUE
+END

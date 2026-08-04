@@ -1,0 +1,7 @@
+FUNC FIB(INT_N):
+    IF: INT_N < 2
+        RETURN INT_N
+    END
+    RETURN FIB(INT_N - 1) + FIB(INT_N - 2)
+END
+PRINT: FIB(30)

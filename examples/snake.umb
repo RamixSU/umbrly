@@ -1,0 +1,146 @@
+# ============================================================
+#  Umbrly Snake — консольная змейка.
+#
+#  Стрелки — управление, Q — выход. Движение по таймеру (SLEEP),
+#  ввод неблокирующий (KEY_PRESSED вместо GETKEY) — поэтому змейка
+#  ползёт сама, а не ждёт нажатия клавиши каждый тик.
+#
+#  Тело змейки хранится как ОДИН массив закодированных позиций
+#  (X*1000+Y) — в языке нет очереди/структур, но кодирование пары
+#  координат в одно число даёт: PUSH — новая голова, SLICE — срезать
+#  хвост, CONTAINS — проверка столкновения с собой одной функцией.
+#
+#  Внутри FUNC присваивание скаляра (INT_/STR_/...) не меняет
+#  глобальную переменную — только локальную копию. Поэтому вся логика
+#  хода/столкновений/очков — на верхнем уровне; функции — только
+#  чистые вычисления (ENCODE/DECODE/CELL_CHAR) или мутация массива
+#  через PUSH (это работает и изнутри функции, т.к. массив — ссылка).
+# ============================================================
+
+INT_BOARD_W = 24
+INT_BOARD_H = 14
+INT_TICK_MS = 110
+
+FUNC ENCODE(INT_X, INT_Y):
+    RETURN INT_X * 1000 + INT_Y
+END
+
+FUNC DECODE_X(INT_POS):
+    RETURN FLOOR(INT_POS / 1000)
+END
+
+FUNC DECODE_Y(INT_POS):
+    RETURN INT_POS % 1000
+END
+
+FUNC CELL_CHAR(INT_X, INT_Y):
+    IF: INT_X == 0 OR INT_X == INT_BOARD_W - 1 OR INT_Y == 0 OR INT_Y == INT_BOARD_H - 1
+        RETURN "#"
+    END
+    INT_POS = ENCODE(INT_X, INT_Y)
+    IF: INT_POS == ARR_SNAKE[LEN(ARR_SNAKE) - 1]
+        RETURN "@"
+    END
+    IF: INT_POS == INT_FOOD_POS
+        RETURN "*"
+    END
+    IF: CONTAINS(ARR_SNAKE, INT_POS)
+        RETURN "o"
+    END
+    RETURN " "
+END
+
+FUNC BUILD_ROW(INT_Y):
+    STR_ROW = ""
+    FOR: INT_X = 0 TO INT_BOARD_W - 1
+        STR_ROW = STR_ROW + CELL_CHAR(INT_X, INT_Y)
+    END
+    RETURN STR_ROW
+END
+
+FUNC DRAW_FRAME():
+    GOTOXY(0, 0)
+    COLOR(10, 0)
+    FOR: INT_Y = 0 TO INT_BOARD_H - 1
+        PRINT: BUILD_ROW(INT_Y)
+    END
+    COLOR(15, 0)
+    PRINT: "Счёт: [INT_SCORE]     Стрелки — управление, Q — выход   "
+END
+
+FUNC SPAWN_FOOD():
+    WHILE: TRUE
+        INT_X = RANDOM(1, INT_BOARD_W - 2)
+        INT_Y = RANDOM(1, INT_BOARD_H - 2)
+        INT_POS = ENCODE(INT_X, INT_Y)
+        IF: NOT CONTAINS(ARR_SNAKE, INT_POS)
+            RETURN INT_POS
+        END
+    END
+END
+
+# ---------- Инициализация ----------
+CONSOLE_TITLE("Umbrly Snake")
+CLS()
+
+ARR_SNAKE = [ENCODE(10, 7), ENCODE(11, 7), ENCODE(12, 7)]
+INT_DX = 1
+INT_DY = 0
+INT_SCORE = 0
+INT_FOOD_POS = SPAWN_FOOD()
+
+DRAW_FRAME()
+
+# ---------- Игровой цикл ----------
+WHILE: TRUE
+    IF: KEY_PRESSED(38) AND INT_DY == 0
+        INT_DX = 0
+        INT_DY = -1
+    END
+    IF: KEY_PRESSED(40) AND INT_DY == 0
+        INT_DX = 0
+        INT_DY = 1
+    END
+    IF: KEY_PRESSED(37) AND INT_DX == 0
+        INT_DX = -1
+        INT_DY = 0
+    END
+    IF: KEY_PRESSED(39) AND INT_DX == 0
+        INT_DX = 1
+        INT_DY = 0
+    END
+    IF: KEY_PRESSED(81)
+        BREAK
+    END
+
+    INT_OLD_HEAD = ARR_SNAKE[LEN(ARR_SNAKE) - 1]
+    INT_NEW_X = DECODE_X(INT_OLD_HEAD) + INT_DX
+    INT_NEW_Y = DECODE_Y(INT_OLD_HEAD) + INT_DY
+
+    IF: INT_NEW_X <= 0 OR INT_NEW_X >= INT_BOARD_W - 1 OR INT_NEW_Y <= 0 OR INT_NEW_Y >= INT_BOARD_H - 1
+        BREAK
+    END
+
+    INT_NEW_HEAD = ENCODE(INT_NEW_X, INT_NEW_Y)
+
+    IF: CONTAINS(ARR_SNAKE, INT_NEW_HEAD)
+        BREAK
+    END
+
+    PUSH(ARR_SNAKE, INT_NEW_HEAD)
+
+    IF: INT_NEW_HEAD == INT_FOOD_POS
+        INT_SCORE = INT_SCORE + 1
+        INT_FOOD_POS = SPAWN_FOOD()
+    ELSE:
+        ARR_SNAKE = SLICE(ARR_SNAKE, 1, LEN(ARR_SNAKE) - 1)
+    END
+
+    DRAW_FRAME()
+    SLEEP(INT_TICK_MS)
+END
+
+COLOR(12, 0)
+GOTOXY(0, INT_BOARD_H + 1)
+PRINT: "Игра окончена! Счёт: [INT_SCORE]                          "
+COLOR_RESET()

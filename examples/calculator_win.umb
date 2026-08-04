@@ -1,0 +1,240 @@
+# Калькулятор на Umbrly через WinAPI
+# Использует: COLOR, GOTOXY, CONSOLE_TITLE, GETKEY, BEEP, CLS
+
+CONSOLE_TITLE("Umbrly Calculator — WinAPI")
+COLOR(11, 0)
+CLS()
+
+FUNC DISP(STR_L1, STR_L2):
+    GOTOXY(2, 1)
+    COLOR(14, 0)
+    PRINT: "┌──────────────────────────────┐"
+    GOTOXY(2, 2)
+    PRINT: "│                              │"
+    GOTOXY(2, 3)
+    PRINT: "│                              │"
+    GOTOXY(2, 4)
+    PRINT: "└──────────────────────────────┘"
+    GOTOXY(4, 2)
+    COLOR(11, 0)
+    IF: LEN(STR_L1) > 28
+        STR_L1 = SUBSTR(STR_L1, LEN(STR_L1) - 28, 28)
+    END
+    PRINT: "[STR_L1]"
+    GOTOXY(4, 3)
+    COLOR(15, 0)
+    IF: LEN(STR_L2) > 28
+        STR_L2 = SUBSTR(STR_L2, LEN(STR_L2) - 28, 28)
+    END
+    PRINT: "[STR_L2]"
+    COLOR(11, 0)
+END
+
+FUNC DRAW():
+    INT_BY = 6
+    COLOR(8, 0)
+    GOTOXY(2, INT_BY)
+    PRINT: "┌───┬───┬───┬───┐"
+    GOTOXY(2, INT_BY + 1)
+    PRINT: "│ 7 │ 8 │ 9 │ / │"
+    GOTOXY(2, INT_BY + 2)
+    PRINT: "├───┼───┼───┼───┤"
+    GOTOXY(2, INT_BY + 3)
+    PRINT: "│ 4 │ 5 │ 6 │ * │"
+    GOTOXY(2, INT_BY + 4)
+    PRINT: "├───┼───┼───┼───┤"
+    GOTOXY(2, INT_BY + 5)
+    PRINT: "│ 1 │ 2 │ 3 │ - │"
+    GOTOXY(2, INT_BY + 6)
+    PRINT: "├───┼───┼───┼───┤"
+    GOTOXY(2, INT_BY + 7)
+    PRINT: "│ 0 │ . │ C │ + │"
+    GOTOXY(2, INT_BY + 8)
+    PRINT: "└───┴───┴───┴───┘"
+    GOTOXY(2, INT_BY + 10)
+    COLOR(7, 0)
+    PRINT: "Esc=Exit  Bksp=Back  Enter=Calc"
+    COLOR(11, 0)
+END
+
+CLS()
+DISP("Umbrly Calculator", "0")
+DRAW()
+
+STR_DISP = ""
+FLOAT_A = 0
+FLOAT_B = 0
+INT_OP = 0
+BOOL_OP = FALSE
+BOOL_NEW = TRUE
+
+WHILE: TRUE
+    GOTOXY(40, 1)
+    COLOR(7, 0)
+    PRINT: "       "
+    GOTOXY(40, 1)
+    
+    STR_KEY = GETKEY()
+    BEEP(660, 40)
+    INT_K = ASC(STR_KEY)
+    
+    # Выход по Escape
+    IF: INT_K == 27
+        BREAK
+    END
+    
+    # --- Backspace ---
+    IF: INT_K == 8
+        IF: !BOOL_NEW && LEN(STR_DISP) > 0
+            STR_DISP = SUBSTR(STR_DISP, 0, LEN(STR_DISP) - 1)
+            IF: STR_DISP == ""
+                BOOL_NEW = TRUE
+            END
+        END
+    END
+    
+    # --- C / c — очистка ---
+    IF: INT_K == 67 || INT_K == 99
+        STR_DISP = ""
+        FLOAT_A = 0
+        FLOAT_B = 0
+        INT_OP = 0
+        BOOL_OP = FALSE
+        BOOL_NEW = TRUE
+        BEEP(500, 40)
+    END
+    
+    # --- = (Enter) — вычисление ---
+    IF: INT_K == 13
+        IF: BOOL_OP && STR_DISP != ""
+            FLOAT_B = TOFLOAT(STR_DISP)
+            FLOAT_R = 0
+            STR_S = ""
+            IF: INT_OP == 43
+                FLOAT_R = FLOAT_A + FLOAT_B
+                STR_S = "+"
+            END
+            IF: INT_OP == 45
+                FLOAT_R = FLOAT_A - FLOAT_B
+                STR_S = "-"
+            END
+            IF: INT_OP == 42
+                FLOAT_R = FLOAT_A * FLOAT_B
+                STR_S = "*"
+            END
+            IF: INT_OP == 47
+                IF: FLOAT_B == 0
+                    DISP("ERROR: division by zero", "")
+                    DRAW()
+                    SLEEP(1500)
+                    STR_DISP = ""
+                    FLOAT_A = 0
+                    INT_OP = 0
+                    BOOL_OP = FALSE
+                    BOOL_NEW = TRUE
+                    DISP("Umbrly Calculator", "0")
+                    DRAW()
+                    CONTINUE
+                END
+                FLOAT_R = FLOAT_A / FLOAT_B
+                STR_S = "/"
+            END
+            DISP("[TOSTR(FLOAT_A)] [STR_S] [TOSTR(FLOAT_B)] =", TOSTR(FLOAT_R))
+            DRAW()
+            BEEP(1200, 50)
+            STR_DISP = TOSTR(FLOAT_R)
+            FLOAT_A = FLOAT_R
+            INT_OP = 0
+            BOOL_OP = FALSE
+            BOOL_NEW = TRUE
+        END
+    END
+    
+    # --- Обработка операторов ---
+    IF: INT_K == 43 || INT_K == 45 || INT_K == 42 || INT_K == 47
+        IF: STR_DISP != "" || BOOL_OP
+            IF: BOOL_OP
+                FLOAT_B = TOFLOAT(STR_DISP)
+                IF: INT_OP == 43
+                    FLOAT_A = FLOAT_A + FLOAT_B
+                END
+                IF: INT_OP == 45
+                    FLOAT_A = FLOAT_A - FLOAT_B
+                END
+                IF: INT_OP == 42
+                    FLOAT_A = FLOAT_A * FLOAT_B
+                END
+                IF: INT_OP == 47
+                    IF: FLOAT_B == 0
+                        DISP("ERROR: division by zero", "")
+                        DRAW()
+                        SLEEP(1500)
+                        STR_DISP = ""
+                        FLOAT_A = 0
+                        INT_OP = 0
+                        BOOL_OP = FALSE
+                        BOOL_NEW = TRUE
+                        DISP("Umbrly Calculator", "0")
+                        DRAW()
+                        CONTINUE
+                    END
+                    FLOAT_A = FLOAT_A / FLOAT_B
+                END
+                STR_DISP = TOSTR(FLOAT_A)
+            ELSE:
+                FLOAT_A = TOFLOAT(STR_DISP)
+            END
+            INT_OP = INT_K
+            BOOL_OP = TRUE
+            BOOL_NEW = TRUE
+            STR_DISP = ""
+        END
+    END
+    
+    # --- Цифры ---
+    IF: INT_K >= 48 && INT_K <= 57
+        INT_D = INT_K - 48
+        IF: BOOL_NEW
+            STR_DISP = TOSTR(INT_D)
+            BOOL_NEW = FALSE
+        ELSE:
+            STR_DISP = STR_DISP + TOSTR(INT_D)
+        END
+    END
+    
+    # --- Десятичная точка ---
+    IF: INT_K == 46
+        IF: BOOL_NEW
+            STR_DISP = "0."
+            BOOL_NEW = FALSE
+        ELSE:
+            IF: FIND(STR_DISP, ".") == -1
+                STR_DISP = STR_DISP + "."
+            END
+        END
+    END
+    
+    # --- Обновление дисплея ---
+    STR_L1 = ""
+    STR_L2 = STR_DISP
+    IF: STR_DISP == ""
+        IF: BOOL_OP
+            STR_L2 = ""
+        ELSE:
+            STR_L2 = "0"
+        END
+    END
+    IF: BOOL_OP
+        STR_OPC = CHR(INT_OP)
+        STR_L1 = "[TOSTR(FLOAT_A)] [STR_OPC]"
+    END
+    IF: STR_L1 == ""
+        STR_L1 = "Umbrly Calculator"
+    END
+    DISP(STR_L1, STR_L2)
+    DRAW()
+END
+
+CLS()
+COLOR(7, 0)
+PRINT: "Calculator closed. Goodbye!"

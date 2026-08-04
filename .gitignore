@@ -1,0 +1,30 @@
+# Executables and binaries
+*.exe
+*.o
+*.obj
+*.dll
+*.pdb
+*.ilk
+
+# Generated source & test outputs
+*.generated.cpp
+
+# Archives & compressed files
+*.zip
+*.tar.gz
+
+# Build outputs
+.build/
+build/
+bin/
+out/
+
+# IDE & Tooling
+.claude/
+.agents/
+.vs/
+.vscode/
+
+# System files
+Thumbs.db
+Desktop.ini

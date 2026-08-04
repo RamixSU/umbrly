@@ -1,0 +1,79 @@
+# ============================================================
+#  Umbrly PATH Doctor
+#  Диагностика переменной окружения PATH в Windows.
+#
+#  Со временем PATH захламляется: удалённые программы оставляют
+#  битые пути, установщики добавляют дубликаты записей. Windows
+#  ищет каждый .exe, перебирая PATH по порядку — чем он грязнее,
+#  тем медленнее запускается любая команда в консоли.
+#
+#  Скрипт ничего не удаляет и не меняет — только показывает
+#  проблемы и сохраняет текстовый отчёт (path_report.txt).
+# ============================================================
+
+FUNC REPORT_LINE(STR_TAG, INT_COLOR, STR_TEXT):
+    COLOR(INT_COLOR, 0)
+    PRINT: STR_TAG + STR_TEXT
+    COLOR_RESET()
+    FILE_APPEND("path_report.txt", STR_TAG + STR_TEXT + "\n")
+END
+
+CONSOLE_TITLE("Umbrly PATH Doctor")
+COLOR(11, 0)
+PRINT: "=== Umbrly PATH Doctor ==="
+COLOR_RESET()
+PRINT: "Компьютер: [COMPUTER_NAME()]   Пользователь: [USER_NAME()]"
+PRINT: "Проверка от: [TIME_NOW()]"
+PRINT: ""
+
+FILE_WRITE("path_report.txt", "Umbrly PATH Doctor -- отчёт от " + TIME_NOW() + "\r\n\r\n")
+
+STR_PATH = ENV_GET("PATH")
+ARR_DIRS = SPLIT(STR_PATH, ";")
+
+ARR_SEEN = []
+INT_OK = 0
+INT_MISSING = 0
+INT_DUPLICATES = 0
+INT_EMPTY = 0
+
+FOR: INT_I = 0 TO LEN(ARR_DIRS) - 1
+    STR_DIR = TRIM(ARR_DIRS[INT_I])
+
+    IF: LEN(STR_DIR) == 0
+        INT_EMPTY = INT_EMPTY + 1
+        CONTINUE
+    END
+
+    IF: CONTAINS(ARR_SEEN, STR_DIR)
+        REPORT_LINE("\[ДУБЛИКАТ\]  ", 14, STR_DIR)
+        INT_DUPLICATES = INT_DUPLICATES + 1
+        CONTINUE
+    END
+    PUSH(ARR_SEEN, STR_DIR)
+
+    IF: DIR_EXISTS(STR_DIR)
+        REPORT_LINE("\[OK\]        ", 10, STR_DIR)
+        INT_OK = INT_OK + 1
+    ELSE:
+        REPORT_LINE("\[НЕ НАЙДЕН\] ", 12, STR_DIR)
+        INT_MISSING = INT_MISSING + 1
+    END
+END
+
+STR_SUMMARY = "Итого: [LEN(ARR_DIRS)] записей -- рабочих: [INT_OK], битых: [INT_MISSING], дублей: [INT_DUPLICATES], пустых: [INT_EMPTY]"
+PRINT: ""
+PRINT: STR_SUMMARY
+FILE_APPEND("path_report.txt", "\r\n" + STR_SUMMARY + "\r\n")
+
+PRINT: ""
+PRINT: "Полный отчёт сохранён в path_report.txt"
+
+IF: INT_MISSING > 0 OR INT_DUPLICATES > 0
+    BOOL_OPEN = CONFIRM("Найдено [INT_MISSING] битых и [INT_DUPLICATES] повторяющихся записей в PATH.\nОткрыть подробный отчёт?", "Umbrly PATH Doctor")
+    IF: BOOL_OPEN
+        SHELL_OPEN("path_report.txt")
+    END
+ELSE:
+    PRINT: "PATH в полном порядке — битых путей и дубликатов не найдено."
+END

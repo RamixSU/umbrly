@@ -1,0 +1,14 @@
+INT_SUM = 0
+FOR: INT_I = 1 TO 10
+    IF: INT_I % 2 == 0
+        CONTINUE
+    END
+    INT_SUM = INT_SUM + INT_I
+END
+PRINT: INT_SUM
+
+INT_N = 3
+WHILE: INT_N > 0
+    INT_N = INT_N - 1
+END
+PRINT: INT_N

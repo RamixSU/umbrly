@@ -1,0 +1,8 @@
+INT_SUM = 0
+FOR: INT_I = 1 TO 5000000
+    IF: INT_I % 2 == 0
+        CONTINUE
+    END
+    INT_SUM = INT_SUM + INT_I
+END
+PRINT: INT_SUM

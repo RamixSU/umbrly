@@ -1,0 +1,20 @@
+FUNC MUTATE_AND_SUM(ARR_VALUES):
+    INT_SUM = 0
+    FOR: INT_I = 0 TO LEN(ARR_VALUES) - 1
+        ARR_VALUES[INT_I] = ARR_VALUES[INT_I] * 2
+        IF: INT_I == 1
+            CONTINUE
+        END
+        INT_SUM = INT_SUM + ARR_VALUES[INT_I]
+    END
+    INT_N = 2
+    WHILE: INT_N > 0
+        INT_SUM = INT_SUM + 1
+        INT_N = INT_N - 1
+    END
+    RETURN INT_SUM
+END
+
+ARR_DATA = [1, 2, 3]
+PRINT: MUTATE_AND_SUM(ARR_DATA)
+PRINT: ARR_DATA

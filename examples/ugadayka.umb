@@ -1,0 +1,26 @@
+# Игра "Угадай число" — WHILE, BREAK/CONTINUE, WinAPI (BEEP, COLOR)
+PRINT: "Я загадал число от 1 до 10. Попробуй угадать!"
+
+INT_SECRET = 7
+INT_SCHET = 0
+
+WHILE: TRUE
+    INT_POPYTKA = INPUT: "Твой вариант: "
+    INT_SCHET = INT_SCHET + 1
+
+    IF: INT_POPYTKA == INT_SECRET
+        BREAK
+    END
+    IF: INT_POPYTKA < INT_SECRET
+        PRINT: "Моё число больше!"
+    ELSE:
+        PRINT: "Моё число меньше!"
+    END
+END
+
+COLOR(10, 0)
+PRINT: "Угадал с [INT_SCHET] попытки! Это было число [INT_SECRET]."
+COLOR_RESET()
+BEEP(1000, 200)
+
+INPUT: "Нажми Enter, чтобы выйти..."

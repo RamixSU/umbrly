@@ -1,0 +1,74 @@
+# ============================================================
+#  Классы в Umbrly.
+#
+#  CLASS Имя: ... END — поля (обычные ТИП_ИМЯ = значение_по_умолчанию)
+#  и методы (обычные FUNC внутри тела класса). Создание экземпляра —
+#  просто вызов ИмяКласса(аргументы), как в Python; метод INIT (если
+#  объявлен) играет роль конструктора и получает эти аргументы.
+#
+#  Внутри метода объект доступен как SELF. Поля читаются/пишутся через
+#  точку: SELF.INT_HP, OBJ_P.STR_NAME и т.д. — имя поля всё так же несёт
+#  префикс типа (INT_/STR_/ARR_/OBJ_/...), поэтому работает та же
+#  типизация и приведение типов, что и для обычных переменных.
+#
+#  Присваивание объекта — по ссылке (OBJ_B = OBJ_A даёт два имени
+#  одного и того же экземпляра), в отличие от массивов, которые при
+#  присваивании копируются. Наследования нет.
+# ============================================================
+
+CLASS Weapon:
+    STR_NAME = "кулаки"
+    INT_DAMAGE = 5
+
+    FUNC INIT(STR_N, INT_D):
+        SELF.STR_NAME = STR_N
+        SELF.INT_DAMAGE = INT_D
+    END
+END
+
+CLASS Player:
+    STR_NAME = ""
+    INT_HP = 100
+    OBJ_WEAPON = Weapon("кулаки", 5)
+
+    FUNC INIT(STR_N):
+        SELF.STR_NAME = STR_N
+    END
+
+    FUNC EQUIP(OBJ_W):
+        SELF.OBJ_WEAPON = OBJ_W
+    END
+
+    FUNC ATTACK(OBJ_TARGET):
+        OBJ_TARGET.TAKE_DAMAGE(SELF.OBJ_WEAPON.INT_DAMAGE)
+        PRINT: "[SELF.STR_NAME] бьёт [SELF.OBJ_WEAPON.STR_NAME] на [SELF.OBJ_WEAPON.INT_DAMAGE] урона"
+    END
+
+    FUNC TAKE_DAMAGE(INT_AMOUNT):
+        SELF.INT_HP = MAX(0, SELF.INT_HP - INT_AMOUNT)
+    END
+
+    FUNC IS_ALIVE():
+        RETURN SELF.INT_HP > 0
+    END
+
+    FUNC STATUS():
+        RETURN SELF.STR_NAME + ": HP " + TOSTR(SELF.INT_HP)
+    END
+END
+
+OBJ_HERO = Player("Герой")
+OBJ_HERO.EQUIP(Weapon("Меч", 25))
+
+OBJ_GOBLIN = Player("Гоблин")
+PRINT: "[OBJ_HERO.STATUS()]"
+PRINT: "[OBJ_GOBLIN.STATUS()]"
+PRINT: ""
+
+WHILE: OBJ_GOBLIN.IS_ALIVE()
+    OBJ_HERO.ATTACK(OBJ_GOBLIN)
+    PRINT: "[OBJ_GOBLIN.STATUS()]"
+END
+
+PRINT: ""
+PRINT: "[OBJ_GOBLIN.STR_NAME] повержен."

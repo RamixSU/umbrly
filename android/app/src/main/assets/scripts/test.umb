@@ -1,0 +1,8 @@
+PRINT: "Umbrly Android Sandbox"
+
+INT_X = 67
+PRINT: "[INT_X] + [INT_X] = [INT_X + INT_X]"
+
+FOR: INT_I = 1 TO 5
+    PRINT: "line [INT_I]"
+END

@@ -1,0 +1,15 @@
+# examples/imports_demo.umb — демонстрация LOAD: MathX подключается из
+# стандартной библиотеки (lib/ рядом с umbrly.exe), geometry_lib — локально,
+# из этой же папки examples/.
+
+LOAD MathX
+LOAD geometry_lib
+
+ARR_NUMS = [4, 8, 15, 16, 23, 42]
+PRINT: "Среднее: [AVG(ARR_NUMS)]"
+PRINT: "17 простое? [IS_PRIME(17)]"
+PRINT: "18 простое? [IS_PRIME(18)]"
+
+FLOAT_AREA = CIRCLE_AREA(3.0)
+PRINT: "Площадь круга r=3: [FLOAT_AREA]"
+PRINT: "Площадь прямоугольника 4x5: [RECT_AREA(4.0, 5.0)]"

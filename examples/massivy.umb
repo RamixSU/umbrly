@@ -1,0 +1,29 @@
+# Массивы и встроенные функции для работы с ними
+ARR_FRUITS = ["яблоко", "банан", "вишня", "манго"]
+PRINT: "Список: [ARR_FRUITS]"
+PRINT: "Всего элементов: [LEN(ARR_FRUITS)]"
+PRINT: "Первый: [ARR_FRUITS[0]], последний: [ARR_FRUITS[LEN(ARR_FRUITS) - 1]]"
+
+PUSH(ARR_FRUITS, "апельсин")
+PRINT: "После PUSH: [ARR_FRUITS]"
+
+STR_LAST = POP(ARR_FRUITS)
+PRINT: "POP вернул: [STR_LAST], осталось: [ARR_FRUITS]"
+
+SORT(ARR_FRUITS)
+PRINT: "По алфавиту: [ARR_FRUITS]"
+
+PRINT: "Содержит 'банан'? [CONTAINS(ARR_FRUITS, \"банан\")]"
+PRINT: "Индекс 'вишня': [INDEX_OF(ARR_FRUITS, \"вишня\")]"
+
+REVERSE(ARR_FRUITS)
+PRINT: "В обратном порядке: [ARR_FRUITS]"
+
+ARR_NUMS = RANGE(1, 6)
+PRINT: "RANGE(1, 6) = [ARR_NUMS]"
+
+INT_SUM = 0
+FOR: INT_I = 0 TO LEN(ARR_NUMS) - 1
+    INT_SUM = INT_SUM + ARR_NUMS[INT_I]
+END
+PRINT: "Сумма RANGE = [INT_SUM]"

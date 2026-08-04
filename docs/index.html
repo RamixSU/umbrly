@@ -1,0 +1,399 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Umbrly — документация языка</title>
+<meta name="description" content="Дружелюбная документация языка Umbrly: синтаксис, типы, классы, компилятор и справочник всех встроенных функций.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script src="theme.js"></script>
+<script>window.__umbrlyApplyStoredTheme();</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Перейти к содержимому</a>
+
+<header class="topbar">
+  <a class="topbar-brand" href="#top">
+    <span class="wordmark-glyph" aria-hidden="true">&gt;_</span>
+    UMBRLY
+    <span class="doc-tag">docs</span>
+  </a>
+  <div class="topbar-controls">
+    <div class="accent-picker" id="accent-picker" role="group" aria-label="Акцентный цвет"></div>
+    <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Переключить тему">☀</button>
+  </div>
+</header>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="search-box">
+      <input type="text" id="search" placeholder="Поиск функции или ключевого слова..." autocomplete="off" spellcheck="false">
+      <span class="search-count" id="search-count"></span>
+    </div>
+
+    <nav class="sidebar-nav" aria-label="Содержание документации">
+      <div class="nav-group">
+        <div class="nav-group-title">Начало</div>
+        <a href="#overview">Привет, Umbrly!</a>
+        <a href="#variables">Переменные и типы</a>
+        <a href="#io">Вывод и ввод</a>
+        <a href="#interpolation">Подстановка [ ]</a>
+        <a href="#expressions">Выражения</a>
+        <a href="#control">Условия и циклы</a>
+        <a href="#arrays">Массивы</a>
+        <a href="#functions-lang">Функции (FUNC)</a>
+        <a href="#classes">Классы (CLASS)</a>
+        <a href="#errors">Обработка ошибок</a>
+        <a href="#comments">Комментарии</a>
+        <a href="#modules">Модули (LOAD)</a>
+        <a href="#cli">Запуск и компиляция</a>
+      </div>
+      <div class="nav-group" id="func-nav">
+        <div class="nav-group-title">Встроенные функции <span class="count-badge" id="func-count-badge">…</span></div>
+        <!-- заполняется script.js -->
+      </div>
+    </nav>
+  </aside>
+
+  <main class="content" id="main">
+
+    <section id="top" class="hero-doc">
+      <h1>Документация языка Umbrly</h1>
+      <p class="lede">
+        Привет! Это справочник по Umbrly — интерпретируемому (и теперь ещё и компилируемому)
+        языку для Windows. Если вы здесь впервые: не пугайтесь непривычного синтаксиса,
+        через пять минут чтения он покажется совершенно естественным. Идея простая — тип
+        переменной зашит прямо в её имя (<code>INT_</code>, <code>STR_</code>, <code>ARR_</code>…),
+        а команды заканчиваются двоеточием, как заголовки в списке. Дальше — по порядку,
+        от «Hello World» до классов и сборки в <code>.exe</code>.
+      </p>
+    </section>
+
+    <section id="overview" class="section">
+      <h2>Привет, Umbrly!</h2>
+      <p>
+        Самая короткая программа на Umbrly — это одна строчка. Вот она, вместе с чем-то
+        чуть более интересным:
+      </p>
+      <pre class="code-panel"><code>PRINT: "Hello World"
+
+INT_CYFRA = 67
+PRINT: "[INT_CYFRA] + [INT_CYFRA] = [INT_CYFRA + INT_CYFRA]"   # 67 + 67 = 134</code></pre>
+      <p>
+        Что здесь происходит: <code>PRINT:</code> — это команда, двоеточие после неё — не
+        опечатка, а часть синтаксиса (так помечены все команды языка: <code>IF:</code>,
+        <code>WHILE:</code> и остальные). Переменная <code>INT_CYFRA</code> сама говорит о
+        своём типе — никакого отдельного объявления не нужно. А блоки кода закрываются
+        явным словом <code>END</code>, а не отступами, так что случайно съехавший пробел
+        никогда не сломает вам программу.
+      </p>
+    </section>
+
+    <section id="variables" class="section">
+      <h2>Переменные и типы</h2>
+      <p>Главная идея языка уместилась в одну таблицу:</p>
+      <table class="ref-table">
+        <thead><tr><th>Префикс</th><th>Тип</th><th>Пример</th></tr></thead>
+        <tbody>
+          <tr><td><code>INT_</code></td><td>целое число</td><td><code>INT_CYFRA = 67</code></td></tr>
+          <tr><td><code>FLOAT_</code></td><td>дробное число</td><td><code>FLOAT_PI = 3.14</code></td></tr>
+          <tr><td><code>STR_</code></td><td>строка</td><td><code>STR_IMYA = "Вова"</code></td></tr>
+          <tr><td><code>BOOL_</code></td><td>логическое (TRUE/FALSE)</td><td><code>BOOL_OK = TRUE</code></td></tr>
+          <tr><td><code>ARR_</code></td><td>массив</td><td><code>ARR_XS = [1, 2, 3]</code></td></tr>
+          <tr><td><code>OBJ_</code></td><td>объект класса</td><td><code>OBJ_HERO = Player("Ая")</code></td></tr>
+        </tbody>
+      </table>
+      <p>
+        Присваивание всегда аккуратно приводит значение к типу переменной (<code>BOOL_</code> —
+        по истинности, <code>INT_</code>/<code>FLOAT_</code> — численно, <code>STR_</code> —
+        через <code>TOSTR</code>). Если приведение невозможно (например, засунуть строку
+        в <code>INT_</code>) — интерпретатор не упадёт молча, а честно скажет об ошибке
+        с номером строки, где это произошло.
+      </p>
+      <p>
+        Один нюанс стоит запомнить сразу, чтобы не удивляться потом:
+        <strong>присваивание массива копирует его, а не ссылается на него</strong> —
+        <code>ARR_B = ARR_A</code> создаёт полностью независимую копию. А вот когда массив
+        передаётся параметром функции (своей <code>FUNC</code> или встроенной вроде
+        <code>PUSH</code>) — это уже ссылка на тот же массив, как в Python или JavaScript,
+        поэтому <code>PUSH(ARR_X, v)</code> меняет именно тот <code>ARR_X</code>, который
+        вы передали.
+      </p>
+    </section>
+
+    <section id="io" class="section">
+      <h2>Вывод и ввод</h2>
+      <p>Три способа поговорить с пользователем:</p>
+      <pre class="code-panel"><code>PRINT: "Hello World"
+PRINT:                                   # пустая строка
+
+INPUT: "Нажмите Enter..."                # пауза, ждёт нажатия
+
+INT_X = INPUT: "Введите число: "         # ввод с приведением к типу переменной</code></pre>
+    </section>
+
+    <section id="interpolation" class="section">
+      <h2>Подстановка в строки — <code>[выражение]</code></h2>
+      <p>
+        Пожалуй, самая приятная в использовании часть языка — квадратные скобки прямо
+        внутри строки:
+      </p>
+      <pre class="code-panel"><code>INT_CYFRA = 67
+PRINT: "[INT_CYFRA] + [INT_CYFRA] = [INT_CYFRA + INT_CYFRA]"   # 67 + 67 = 134</code></pre>
+      <p>
+        Внутри <code>[...]</code> — полноценное выражение: вызовы функций, индексация
+        массивов, арифметика, всё что угодно. Нужны экранированные символы?
+        Пожалуйста: <code>\n \t \r \" \\ \[ \]</code>.
+      </p>
+      <p>
+        Единственная ловушка, о которой стоит знать заранее: если строка должна содержать
+        буквальные квадратные скобки как текст (например, тег вида <code>[OK]</code>), их
+        обязательно нужно экранировать: <code>"\[OK\]"</code>. Без экранирования
+        <code>[OK]</code> будет воспринято как подстановка — переменная <code>OK</code> —
+        и приведёт к ошибке разбора. Это единственный раз, когда язык попросит вас быть
+        внимательнее.
+      </p>
+    </section>
+
+    <section id="expressions" class="section">
+      <h2>Выражения</h2>
+      <p>
+        Приоритет операторов ровно такой, как вы интуитивно ожидаете (по возрастанию):
+        <code>OR</code> → <code>AND</code> → <code>NOT</code> →
+        <code>== != &lt; &gt; &lt;= &gt;=</code> → <code>+ -</code> → <code>* / %</code> → <code>()</code>.
+      </p>
+      <ul>
+        <li><code>+</code> со строками — конкатенация: <code>"Привет, " + STR_IMYA</code></li>
+        <li><code>/</code> двух целых даёт целое, если делится нацело, иначе дробное: <code>7 / 2</code> → <code>3.5</code></li>
+        <li><code>TRUE</code> / <code>FALSE</code> / <code>NIL</code> — литералы</li>
+        <li>Не любите слова? Символьные альтернативы <code>&amp;&amp; || !</code> тоже работают</li>
+      </ul>
+    </section>
+
+    <section id="control" class="section">
+      <h2>Условия и циклы</h2>
+      <p>Ничего неожиданного — если вы писали хоть на одном языке программирования, это будет знакомо с первого взгляда:</p>
+      <pre class="code-panel"><code>IF: INT_X &gt; 10
+    PRINT: "большое"
+ELSE:
+    PRINT: "маленькое"
+END
+
+WHILE: INT_X &gt; 0
+    INT_X = INT_X - 1
+END
+
+FOR: INT_I = 1 TO 10           # включительно; необязательный STEP (по умолчанию 1)
+    PRINT: "[INT_I]"
+END
+FOR: INT_J = 10 TO 1 STEP -1
+    PRINT: "[INT_J]"
+END</code></pre>
+      <p>
+        <code>BREAK</code> и <code>CONTINUE</code> работают внутри <code>WHILE</code>/<code>FOR</code>
+        именно так, как вы ожидаете. А если случайно напишете их вне цикла — это будет
+        замечено ещё на этапе разбора, а не устроит сюрприз во время выполнения.
+      </p>
+    </section>
+
+    <section id="arrays" class="section">
+      <h2>Массивы</h2>
+      <pre class="code-panel"><code>ARR_XS = [10, 20, 30]
+PRINT: "[ARR_XS[0]]"           # 10
+ARR_XS[0] = 99                 # присваивание по индексу
+PUSH(ARR_XS, 40)
+STR_LAST = POP(ARR_XS)
+PRINT: "[LEN(ARR_XS)]"</code></pre>
+      <p>
+        Полный список функций для работы с массивами — <code>PUSH</code>, <code>POP</code>,
+        <code>SORT</code>, <code>SLICE</code>, <code>CONTAINS</code>, <code>INDEX_OF</code> и
+        другие — ищите в справочнике ниже, там же и примеры сигнатур.
+      </p>
+    </section>
+
+    <section id="functions-lang" class="section">
+      <h2>Функции — <code>FUNC</code></h2>
+      <pre class="code-panel"><code>FUNC FACT(INT_N):
+    IF: INT_N &lt;= 1
+        RETURN 1
+    END
+    RETURN INT_N * FACT(INT_N - 1)
+END
+
+PRINT: "[FACT(5)]"             # 120</code></pre>
+      <p>
+        Параметры типизируются точно так же, как обычные переменные (через префикс имени).
+        Порядок объявления в файле не важен — <code>FUNC</code> можно вызывать до места её
+        объявления, потому что все функции регистрируются заранее, до начала выполнения.
+        Рекурсия ограничена глубиной 256 вызовов — этого с запасом хватает для любой
+        разумной задачи.
+      </p>
+      <p>
+        Единственное, что стоит держать в голове: <strong>присваивание скаляра внутри
+        функции не меняет глобальную переменную с тем же именем</strong> — оно создаёт
+        свою, локальную копию. А вот мутация массива через <code>PUSH</code>/<code>SORT</code>/
+        и подобные функции прекрасно работает и изнутри функции, потому что массив всегда
+        передаётся по ссылке. Если нужно «вернуть» изменённый массив из функции наружу —
+        просто верните его через <code>RETURN</code> и переприсвойте у вызывающей стороны.
+      </p>
+    </section>
+
+    <section id="classes" class="section">
+      <h2>Классы — <code>CLASS</code></h2>
+      <p>
+        Когда простых переменных и функций становится мало, в Umbrly есть классы —
+        без лишней церемонии и без наследования, только поля и методы:
+      </p>
+      <pre class="code-panel"><code>CLASS Weapon:
+    STR_NAME = "кулаки"
+    INT_DAMAGE = 5
+
+    FUNC INIT(STR_N, INT_D):
+        SELF.STR_NAME = STR_N
+        SELF.INT_DAMAGE = INT_D
+    END
+END
+
+CLASS Player:
+    STR_NAME = ""
+    INT_HP = 100
+    OBJ_WEAPON = Weapon("кулаки", 5)
+
+    FUNC INIT(STR_N):
+        SELF.STR_NAME = STR_N
+    END
+
+    FUNC EQUIP(OBJ_W):
+        SELF.OBJ_WEAPON = OBJ_W
+    END
+END
+
+OBJ_HERO = Player("Ая")
+OBJ_HERO.EQUIP(Weapon("меч", 12))
+PRINT: "[OBJ_HERO.STR_NAME] бьёт на [OBJ_HERO.OBJ_WEAPON.INT_DAMAGE]"</code></pre>
+      <p>
+        Читается это так: <code>CLASS Имя: ... END</code> описывает поля (обычные
+        <code>ТИП_ИМЯ = значение_по_умолчанию</code>) и методы (обычные <code>FUNC</code>
+        внутри тела класса). Создать экземпляр — просто вызвать имя класса как функцию,
+        точно как в Python: <code>Player("Ая")</code>. Если внутри класса объявлен метод
+        <code>INIT</code>, он сыграет роль конструктора и получит переданные аргументы.
+      </p>
+      <p>
+        Внутри метода объект всегда доступен как <code>SELF</code>. Поля читаются и
+        пишутся через точку — <code>SELF.INT_HP</code>, <code>OBJ_HERO.STR_NAME</code> — и
+        имя поля так же несёт префикс типа, поэтому работает та же типизация и приведение
+        типов, что и для обычных переменных.
+      </p>
+      <p>
+        И ещё один момент, симметричный массивам, но в обратную сторону:
+        <strong>присваивание объекта — по ссылке</strong> (<code>OBJ_B = OBJ_A</code> даёт
+        два имени одного и того же экземпляра, а не копию). Наследования в языке
+        сознательно нет — если очень нужно переиспользовать логику, композиция (поле
+        одного класса — объект другого, как <code>OBJ_WEAPON</code> выше) решает эту
+        задачу без лишней сложности.
+      </p>
+    </section>
+
+    <section id="errors" class="section">
+      <h2>Обработка ошибок — <code>TRY</code> / <code>CATCH</code></h2>
+      <p>Если что-то может пойти не так — оберните это в <code>TRY</code>, а не бойтесь заранее:</p>
+      <pre class="code-panel"><code>TRY:
+    INT_X = TOINT("не число")
+CATCH: STR_ERR
+    PRINT: "Поймали: [STR_ERR]"
+END</code></pre>
+      <p>Ошибки всегда сообщают номер строки, так что искать причину долго не придётся: <code>Ошибка (строка 5): ...</code></p>
+    </section>
+
+    <section id="comments" class="section">
+      <h2>Комментарии</h2>
+      <p>Оставляйте себе (и будущим читателям кода) заметки любым удобным способом — работают оба варианта:</p>
+      <pre class="code-panel"><code># так можно
+// и так тоже
+PRINT: "код"   # и в конце строки</code></pre>
+    </section>
+
+    <section id="modules" class="section">
+      <h2>Модули — <code>LOAD</code></h2>
+      <p>Когда один файл становится слишком большим — вынесите часть в отдельный файл и подключите:</p>
+      <pre class="code-panel"><code>LOAD MathX
+LOAD geometry_lib
+
+PRINT: "[AVG([4, 8, 15, 16, 23, 42])]"
+PRINT: "[CIRCLE_AREA(3.0)]"</code></pre>
+      <p>
+        <code>LOAD ИМЯ</code> (без двоеточия) ищет файл <code>ИМЯ.umb</code> сначала рядом со
+        скриптом, который его подключает — так работают локальные модули внутри одного проекта.
+        Если там ничего не нашлось, поиск продолжается в папке <code>lib/</code> рядом с
+        <code>umbrly.exe</code> — это общая для всех проектов «стандартная библиотека»
+        (в комплекте уже есть <code>lib/MathX.umb</code> с парой полезных функций).
+      </p>
+      <p>
+        Все <code>FUNC</code>/<code>CLASS</code> из найденного файла становятся доступны глобально,
+        без пространств имён — как если бы их код был вставлен прямо на место <code>LOAD</code>.
+        Повторный импорт одного и того же модуля (в том числе по кругу, через цепочку других
+        <code>LOAD</code>) тихо схлопывается в пустоту — функции не регистрируются дважды.
+      </p>
+      <p class="section-lede">
+        <code>LOAD</code> допустим только на верхнем уровне файла (не внутри
+        <code>IF</code>/<code>WHILE</code>/<code>FUNC</code>) и разрешается ещё на этапе загрузки
+        файла — до выполнения и до компиляции, поэтому ведёт себя одинаково что в <code>-r</code>,
+        что в <code>-b</code>/<code>-c</code>.
+      </p>
+    </section>
+
+    <section id="cli" class="section">
+      <h2>Запуск и компиляция — <code>umbrly.exe</code></h2>
+      <p>
+        Umbrly можно не только интерпретировать, но и собрать в настоящий нативный
+        <code>.exe</code> — через встроенный транспилятор в C++ и вызов <code>g++</code>
+        (нужен установленный MinGW-w64/MSYS2). Вот полный набор команд:
+      </p>
+      <table class="ref-table">
+        <thead><tr><th>Команда</th><th>Что делает</th></tr></thead>
+        <tbody>
+          <tr><td><code>umbrly file.umb</code></td><td>запустить через интерпретатор (короткая форма <code>-r</code>)</td></tr>
+          <tr><td><code>umbrly -r file.umb</code> / <code>run file.umb</code></td><td>запуск через интерпретатор</td></tr>
+          <tr><td><code>umbrly -b file.umb [out.exe]</code> / <code>build</code> / <code>compile</code></td><td>собрать нативный <code>.exe</code> (нужен g++/MinGW-w64)</td></tr>
+          <tr><td><code>umbrly -c file.umb [out.cpp]</code></td><td>транспилировать в C++ без вызова g++ — удобно посмотреть, что получилось</td></tr>
+          <tr><td><code>umbrly -t file.umb</code></td><td>только проверить синтаксис (лексер + парсер), без выполнения</td></tr>
+          <tr><td><code>umbrly -ir file.umb</code></td><td>напечатать AST программы в текстовом виде</td></tr>
+          <tr><td><code>umbrly -d file.umb</code> / <code>-trace file.umb</code></td><td>запустить с построчной трассировкой выполнения</td></tr>
+          <tr><td><code>umbrly -v</code> / <code>--version</code></td><td>версия</td></tr>
+          <tr><td><code>umbrly -h</code> / <code>--help</code></td><td>краткая справка</td></tr>
+          <tr><td><code>umbrly --info</code></td><td>информация о языке и бэкенде компиляции</td></tr>
+          <tr><td><code>umbrly</code></td><td>без аргументов — интерактивный REPL</td></tr>
+        </tbody>
+      </table>
+      <p>
+        Компилятор превращает управляющие конструкции (<code>IF/WHILE/FOR/FUNC/TRY</code>
+        и другие) в нативный C++ напрямую, а вызовы встроенных функций и методов классов
+        по-прежнему идут через тот же интерпретатор, что и в режиме <code>-r</code> — это
+        значит, что поведение между интерпретируемым и скомпилированным запуском совпадает
+        один в один, и логика не дублируется в двух местах.
+      </p>
+      <p class="section-lede">
+        <code>umbrly.exe</code> должен оставаться рядом с папками <code>include/</code> и
+        <code>src/</code> — они нужны ему для сборки <code>-b</code>/<code>-c</code>.
+        Упаковка проекта (<code>-p</code>/<code>pack</code>) пока не реализована — это
+        отдельная будущая задача.
+      </p>
+    </section>
+
+    <section id="reference" class="section">
+      <h2>Справочник встроенных функций <span class="count-badge" id="func-count-badge-2">…</span></h2>
+      <p class="section-lede">Заметная часть из них — прямые обёртки над WinAPI, так что консольные Windows-программы получаются практически без усилий. Не пытайтесь запомнить всё сразу — просто начните печатать в поле поиска слева, оно фильтрует и по имени, и по описанию.</p>
+      <div id="func-groups"><!-- заполняется script.js --></div>
+      <p class="no-results" id="no-results" hidden>Ничего не найдено.</p>
+    </section>
+
+  </main>
+</div>
+
+<script src="data.js"></script>
+<script src="script.js"></script>
+</body>
+</html>

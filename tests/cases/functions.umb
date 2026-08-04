@@ -1,0 +1,7 @@
+FUNC FACT(INT_N):
+    IF: INT_N <= 1
+        RETURN 1
+    END
+    RETURN INT_N * FACT(INT_N - 1)
+END
+PRINT: FACT(10)
