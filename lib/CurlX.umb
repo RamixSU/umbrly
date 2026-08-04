@@ -1,0 +1,158 @@
+# ==============================================================================
+#  Umbrly CurlX Library (lib/CurlX.umb)
+#  Удобная обёртка для работы с HTTP / REST API через curl.exe в Umbrly.
+# ==============================================================================
+
+# Проверка наличия curl.exe в системе
+FUNC HTTP_IS_AVAILABLE():
+    INT_CODE = RUN("cmd.exe /c curl --version >nul 2>nul")
+    RETURN INT_CODE == 0
+END
+
+# Вспомогательная функция для генерации уникального имени временного файла
+FUNC HTTP_TEMP_NAME(STR_PREFIX):
+    RETURN "umbrly_http_" + STR_PREFIX + "_" + TOSTR(TICK_COUNT()) + ".tmp"
+END
+
+# Простой HTTP GET запрос
+# Возвращает текст ответа сервера (body)
+FUNC HTTP_GET(STR_URL):
+    STR_OUT_FILE = HTTP_TEMP_NAME("out")
+    
+    # -s: тихий режим, -L: следовать по редиректам, -k: не падать на SSL
+    STR_CMD = "curl.exe -s -L -k \"" + STR_URL + "\" -o \"" + STR_OUT_FILE + "\""
+    INT_RC = RUN(STR_CMD)
+
+    STR_BODY = ""
+    IF: FILE_EXISTS(STR_OUT_FILE)
+        STR_BODY = FILE_READ(STR_OUT_FILE)
+        FILE_DELETE(STR_OUT_FILE)
+    END
+
+    RETURN STR_BODY
+END
+
+# HTTP GET запрос с получением HTTP статус-кода (например, 200, 404)
+FUNC HTTP_STATUS(STR_URL):
+    STR_OUT_FILE = HTTP_TEMP_NAME("status")
+    
+    STR_CMD = "cmd.exe /c curl.exe -s -L -k -o nul -w \"%{http_code}\" \"" + STR_URL + "\" > \"" + STR_OUT_FILE + "\""
+    INT_RC = RUN(STR_CMD)
+
+    INT_STATUS = 0
+    IF: FILE_EXISTS(STR_OUT_FILE)
+        STR_CODE = TRIM(FILE_READ(STR_OUT_FILE))
+        INT_STATUS = TOINT(STR_CODE)
+        FILE_DELETE(STR_OUT_FILE)
+    END
+
+    RETURN INT_STATUS
+END
+
+# HTTP POST запрос с передачей тела (text / form-data)
+FUNC HTTP_POST(STR_URL, STR_PAYLOAD):
+    STR_IN_FILE  = HTTP_TEMP_NAME("in")
+    STR_OUT_FILE = HTTP_TEMP_NAME("out")
+
+    FILE_WRITE(STR_IN_FILE, STR_PAYLOAD)
+
+    STR_CMD = "curl.exe -s -L -k -X POST \"" + STR_URL + "\" -d @" + STR_IN_FILE + " -o \"" + STR_OUT_FILE + "\""
+    INT_RC = RUN(STR_CMD)
+
+    STR_BODY = ""
+    IF: FILE_EXISTS(STR_OUT_FILE)
+        STR_BODY = FILE_READ(STR_OUT_FILE)
+        FILE_DELETE(STR_OUT_FILE)
+    END
+
+    IF: FILE_EXISTS(STR_IN_FILE)
+        FILE_DELETE(STR_IN_FILE)
+    END
+
+    RETURN STR_BODY
+END
+
+# HTTP POST запрос в формате JSON (автоматически добавляет заголовок Content-Type: application/json)
+FUNC HTTP_POST_JSON(STR_URL, STR_JSON_BODY):
+    STR_IN_FILE  = HTTP_TEMP_NAME("json_in")
+    STR_OUT_FILE = HTTP_TEMP_NAME("json_out")
+
+    FILE_WRITE(STR_IN_FILE, STR_JSON_BODY)
+
+    STR_CMD = "curl.exe -s -L -k -X POST \"" + STR_URL + "\" -H \"Content-Type: application/json\" -d @" + STR_IN_FILE + " -o \"" + STR_OUT_FILE + "\""
+    INT_RC = RUN(STR_CMD)
+
+    STR_BODY = ""
+    IF: FILE_EXISTS(STR_OUT_FILE)
+        STR_BODY = FILE_READ(STR_OUT_FILE)
+        FILE_DELETE(STR_OUT_FILE)
+    END
+
+    IF: FILE_EXISTS(STR_IN_FILE)
+        FILE_DELETE(STR_IN_FILE)
+    END
+
+    RETURN STR_BODY
+END
+
+# Скачивание файла по URL и сохранение на диск
+FUNC HTTP_DOWNLOAD(STR_URL, STR_DEST_PATH):
+    STR_CMD = "curl.exe -s -L -k \"" + STR_URL + "\" -o \"" + STR_DEST_PATH + "\""
+    INT_RC = RUN(STR_CMD)
+
+    IF: FILE_EXISTS(STR_DEST_PATH)
+        RETURN TRUE
+    END
+
+    RETURN FALSE
+END
+
+# Объектно-ориентированный клиент для работы с REST API
+CLASS HttpClient:
+    STR_BASE_URL = ""
+    STR_USER_AGENT = "Umbrly-CurlX/1.0"
+    INT_TIMEOUT = 10
+
+    FUNC INIT(STR_BASE):
+        SELF.STR_BASE_URL = STR_BASE
+    END
+
+    FUNC GET(STR_ENDPOINT):
+        STR_FULL_URL = SELF.STR_BASE_URL + STR_ENDPOINT
+        STR_OUT_FILE = HTTP_TEMP_NAME("client_get")
+
+        STR_CMD = "curl.exe -s -L -k -A \"" + SELF.STR_USER_AGENT + "\" --max-time " + TOSTR(SELF.INT_TIMEOUT) + " \"" + STR_FULL_URL + "\" -o \"" + STR_OUT_FILE + "\""
+        INT_RC = RUN(STR_CMD)
+
+        STR_BODY = ""
+        IF: FILE_EXISTS(STR_OUT_FILE)
+            STR_BODY = FILE_READ(STR_OUT_FILE)
+            FILE_DELETE(STR_OUT_FILE)
+        END
+
+        RETURN STR_BODY
+    END
+
+    FUNC POST_JSON(STR_ENDPOINT, STR_JSON_BODY):
+        STR_FULL_URL = SELF.STR_BASE_URL + STR_ENDPOINT
+        STR_IN_FILE  = HTTP_TEMP_NAME("client_post_in")
+        STR_OUT_FILE = HTTP_TEMP_NAME("client_post_out")
+
+        FILE_WRITE(STR_IN_FILE, STR_JSON_BODY)
+
+        STR_CMD = "curl.exe -s -L -k -A \"" + SELF.STR_USER_AGENT + "\" --max-time " + TOSTR(SELF.INT_TIMEOUT) + " -X POST \"" + STR_FULL_URL + "\" -H \"Content-Type: application/json\" -d @" + STR_IN_FILE + " -o \"" + STR_OUT_FILE + "\""
+        INT_RC = RUN(STR_CMD)
+
+        STR_BODY = ""
+        IF: FILE_EXISTS(STR_OUT_FILE)
+            STR_BODY = FILE_READ(STR_OUT_FILE)
+            FILE_DELETE(STR_OUT_FILE)
+        END
+
+        IF: FILE_EXISTS(STR_IN_FILE)
+            FILE_DELETE(STR_IN_FILE)
+        END
+
+        RETURN STR_BODY
+    END
+END

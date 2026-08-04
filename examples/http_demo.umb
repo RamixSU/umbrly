@@ -1,0 +1,57 @@
+# ==============================================================================
+#  Демонстрация библиотеки CurlX в Umbrly
+# ==============================================================================
+
+LOAD CurlX
+
+CONSOLE_TITLE("Umbrly HTTP CurlX Demo")
+COLOR(11, 0)
+PRINT: "=== Umbrly HTTP / CurlX Demo ==="
+COLOR_RESET()
+PRINT: ""
+
+IF: NOT HTTP_IS_AVAILABLE()
+    COLOR(12, 0)
+    PRINT: "Ошибка: cURL не найден в вашей системе."
+    COLOR_RESET()
+    EXIT(1)
+END
+
+COLOR(10, 0)
+PRINT: "\[OK\] cURL доступен в системе."
+COLOR_RESET()
+PRINT: ""
+
+# 1. Простой GET запрос
+PRINT: "1. Отправка GET запроса к https://httpbin.org/zen или api.github.com..."
+STR_RESP = HTTP_GET("https://api.github.com/zen")
+COLOR(14, 0)
+PRINT: "Ответ сервера (GitHub Zen):"
+PRINT: "\"" + TRIM(STR_RESP) + "\""
+COLOR_RESET()
+PRINT: ""
+
+# 2. Проверка HTTP статус-кода
+PRINT: "2. Проверка статус-кода для https://httpbin.org/status/200..."
+INT_CODE = HTTP_STATUS("https://httpbin.org/status/200")
+COLOR(10, 0)
+PRINT: "Получен HTTP status: [INT_CODE]"
+COLOR_RESET()
+PRINT: ""
+
+# 3. HTTP POST JSON с использованием объекта HttpClient
+PRINT: "3. Создание клиенcкого объекта HttpClient для REST API..."
+OBJ_CLIENT = HttpClient("https://httpbin.org")
+
+PRINT: "Отправка POST JSON через HttpClient..."
+STR_POST_RESP = OBJ_CLIENT.POST_JSON("/post", "{\"framework\": \"Umbrly\", \"version\": 0.2, \"status\": \"awesome\"}")
+
+COLOR(13, 0)
+PRINT: "Ответ REST API:"
+PRINT: SUBSTR(STR_POST_RESP, 0, 300) + "..."
+COLOR_RESET()
+PRINT: ""
+
+COLOR(10, 0)
+PRINT: "=== Все HTTP тесты успешно пройдены! ==="
+COLOR_RESET()
