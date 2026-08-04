@@ -1,0 +1,305 @@
+# ==============================================================================
+#  Umbrly System Guardian & Dev Suite v1.0
+#  Полноценная консольная утилита системного мониторинга, диагностики
+#  окружения разработки, очистки временных файлов и заметок.
+# ==============================================================================
+
+# Класс для хранения информации о системе
+CLASS SystemInfo:
+    STR_HOST = ""
+    STR_USER = ""
+    INT_CPUS = 0
+    INT_WIDTH = 0
+    INT_HEIGHT = 0
+    FLOAT_UPTIME_HRS = 0.0
+
+    FUNC INIT():
+        SELF.STR_HOST = COMPUTER_NAME()
+        SELF.STR_USER = USER_NAME()
+        SELF.INT_CPUS = CPU_COUNT()
+        SELF.INT_WIDTH = SCREEN_WIDTH()
+        SELF.INT_HEIGHT = SCREEN_HEIGHT()
+        # TICK_COUNT() возвращает миллисекунды с момента старта ОС
+        SELF.FLOAT_UPTIME_HRS = TOFLOAT(TICK_COUNT()) / 3600000.0
+    END
+END
+
+# Проверка наличия утилиты в PATH по консольной команде
+FUNC CHECK_TOOL(STR_CMD):
+    INT_CODE = RUN(STR_CMD)
+    RETURN INT_CODE == 0
+END
+
+# Красивый цветной вывод строки в консоль и файл отчёта
+FUNC LOG_STATUS(STR_TAG, INT_COLOR, STR_LABEL, STR_DETAILS):
+    COLOR(INT_COLOR, 0)
+    PRINT: STR_TAG + " " + STR_LABEL + " " + STR_DETAILS
+    COLOR_RESET()
+    FILE_APPEND("system_guardian_report.txt", STR_TAG + " " + STR_LABEL + " " + STR_DETAILS + "\r\n")
+END
+
+# РЕЖИМ 1: Диагностика системы и окружения разработки
+FUNC RUN_DIAGNOSTICS(OBJ_SYS):
+    CLS()
+    COLOR(11, 0)
+    PRINT: "=== [1] Диагностика системы и окружения разработки ==="
+    COLOR_RESET()
+    PRINT: "Время проверки: [TIME_NOW()]"
+    PRINT: "--------------------------------------------------------"
+    
+    FILE_WRITE("system_guardian_report.txt", "=== Umbrly System Guardian Report -- " + TIME_NOW() + " ===\r\n\r\n")
+    FILE_APPEND("system_guardian_report.txt", "ПК: " + OBJ_SYS.STR_HOST + " | Пользователь: " + OBJ_SYS.STR_USER + "\r\n")
+    FILE_APPEND("system_guardian_report.txt", "Ядер CPU: " + TOSTR(OBJ_SYS.INT_CPUS) + " | Экран: " + TOSTR(OBJ_SYS.INT_WIDTH) + "x" + TOSTR(OBJ_SYS.INT_HEIGHT) + "\r\n\r\n")
+
+    PRINT: "Конфигурация ПК:"
+    PRINT: "  • Имя хоста:    [OBJ_SYS.STR_HOST]"
+    PRINT: "  • Пользователь: [OBJ_SYS.STR_USER]"
+    PRINT: "  • Процессор:    [OBJ_SYS.INT_CPUS] логических ядер"
+    PRINT: "  • Разрешение:   [OBJ_SYS.INT_WIDTH] x [OBJ_SYS.INT_HEIGHT]"
+    PRINT: "  • Аптайм ОС:    [ROUND(OBJ_SYS.FLOAT_UPTIME_HRS * 10.0) / 10.0] ч."
+    PRINT: ""
+    PRINT: "Проверка установленных инструментов разработки:"
+
+    ARR_NAMES = ["Git CLI", "Python", "Node.js", "GCC (MinGW)", "Rust (rustc)", "Go Lang", "Docker", "VS Code"]
+    ARR_CMDS  = ["where git >nul 2>nul", "where python >nul 2>nul", "where node >nul 2>nul", "where g++ >nul 2>nul", "where rustc >nul 2>nul", "where go >nul 2>nul", "where docker >nul 2>nul", "where code >nul 2>nul"]
+
+    INT_FOUND = 0
+    INT_TOTAL = LEN(ARR_NAMES)
+
+    FOR: INT_I = 0 TO INT_TOTAL - 1
+        STR_NAME = ARR_NAMES[INT_I]
+        STR_CMD  = ARR_CMDS[INT_I]
+
+        BOOL_OK = CHECK_TOOL(STR_CMD)
+        IF: BOOL_OK
+            LOG_STATUS("\[УСТАНОВЛЕН\]  ", 10, PAD_RIGHT(STR_NAME, 14, " "), "-> доступен в PATH")
+            INT_FOUND = INT_FOUND + 1
+        ELSE:
+            LOG_STATUS("\[НЕ НАЙДЕН\]  ", 14, PAD_RIGHT(STR_NAME, 14, " "), "-> не обнаружен в PATH")
+        END
+    END
+
+    PRINT: "--------------------------------------------------------"
+    COLOR(11, 0)
+    PRINT: "Итого найдено инструментов: [INT_FOUND] из [INT_TOTAL]"
+    COLOR_RESET()
+    PRINT: "Отчёт сохранён в 'system_guardian_report.txt'"
+    PRINT: ""
+    INPUT: "Нажмите Enter для возврата в меню..."
+END
+
+# РЕЖИМ 2: Очистка временных файлов (%TEMP%)
+FUNC CLEAN_TEMP_FILES():
+    CLS()
+    COLOR(14, 0)
+    PRINT: "=== [2] Сканирование и очистка папки %TEMP% ==="
+    COLOR_RESET()
+    
+    STR_TEMP_DIR = ENV_GET("TEMP")
+    IF: LEN(STR_TEMP_DIR) == 0
+        STR_TEMP_DIR = ENV_GET("TMP")
+    END
+
+    IF: LEN(STR_TEMP_DIR) == 0 OR NOT DIR_EXISTS(STR_TEMP_DIR)
+        COLOR(12, 0)
+        PRINT: "Ошибка: Временная папка %TEMP% не найдена!"
+        COLOR_RESET()
+        INPUT: "Нажмите Enter..."
+        RETURN
+    END
+
+    PRINT: "Целевая папка: [STR_TEMP_DIR]"
+    PRINT: "Анализ состояния..."
+    
+    # Создаём временную папку-маркер для теста запись/чтение
+    STR_TEST_DIR = STR_TEMP_DIR + "\\umbrly_cleanup_test"
+    DIR_CREATE(STR_TEST_DIR)
+
+    IF: DIR_EXISTS(STR_TEST_DIR)
+        COLOR(10, 0)
+        PRINT: "\[OK\] Доступ на запись и очистку в %TEMP% подтверждён."
+        COLOR_RESET()
+    ELSE:
+        COLOR(12, 0)
+        PRINT: "\[ВНИМАНИЕ\] Ограниченный доступ к %TEMP%."
+        COLOR_RESET()
+    END
+
+    PRINT: ""
+    BOOL_CONFIRM = CONFIRM("Вы действительно хотите выполнить очистку временных файлов пользователем [USER_NAME()]?", "Umbrly System Guardian")
+    
+    IF: BOOL_CONFIRM
+        PRINT: "Запуск очистки устаревших временных файлов..."
+        INT_CODE = RUN("del /f /q /s \"%TEMP%\\*.tmp\" >nul 2>nul")
+        COLOR(10, 0)
+        PRINT: "\[УСПЕШНО\] Временные файлы *.tmp очищены."
+        COLOR_RESET()
+        BEEP(1000, 150)
+    ELSE:
+        PRINT: "Операция очистки отменена пользователем."
+        BEEP(500, 100)
+    END
+
+    PRINT: ""
+    INPUT: "Нажмите Enter для возврата в меню..."
+END
+
+# РЕЖИМ 3: Заметки и работа с буфером обмена
+FUNC CLIPBOARD_VAULT():
+    CLS()
+    COLOR(13, 0)
+    PRINT: "=== [3] Заметки и Буфер обмена Windows ==="
+    COLOR_RESET()
+    
+    STR_CLIP = CLIPBOARD_GET()
+    PRINT: "Текущий текст в буфере обмена:"
+    COLOR(11, 0)
+    IF: LEN(STR_CLIP) > 0
+        PRINT: "\" [STR_CLIP] \""
+    ELSE:
+        PRINT: "(буфер обмена пуст или содержит нетекстовые данные)"
+    END
+    COLOR_RESET()
+    PRINT: ""
+    PRINT: "Выберите действие:"
+    PRINT: "  1. Сохранить текст из буфера в лог заметок (system_vault.log)"
+    PRINT: "  2. Скопировать новую заметку в буфер обмена"
+    PRINT: "  0. Назад в меню"
+    
+    STR_CHOICE = INPUT: "Ваш выбор: "
+    
+    IF: STR_CHOICE == "1"
+        IF: LEN(STR_CLIP) > 0
+            STR_ENTRY = "\[" + TIME_NOW() + "\] " + STR_CLIP + "\r\n"
+            FILE_APPEND("system_vault.log", STR_ENTRY)
+            COLOR(10, 0)
+            PRINT: "Заметка успешно сохранена в 'system_vault.log'!"
+            COLOR_RESET()
+            BEEP(800, 100)
+        ELSE:
+            COLOR(12, 0)
+            PRINT: "Нечего сохранять — буфер обмена пуст."
+            COLOR_RESET()
+        END
+        INPUT: "Нажмите Enter..."
+    END
+
+    IF: STR_CHOICE == "2"
+        STR_TEXT = INPUT: "Введите текст для буфера обмена: "
+        IF: LEN(STR_TEXT) > 0
+            CLIPBOARD_SET(STR_TEXT)
+            COLOR(10, 0)
+            PRINT: "Текст успешно помещён в буфер обмена!"
+            COLOR_RESET()
+            BEEP(1200, 120)
+        END
+        INPUT: "Нажмите Enter..."
+    END
+END
+
+# Вспомогательная функция для рекурсивного расчёта Фибоначчи
+FUNC BENCHMARK_FIB(INT_N):
+    IF: INT_N <= 1
+        RETURN INT_N
+    END
+    RETURN BENCHMARK_FIB(INT_N - 1) + BENCHMARK_FIB(INT_N - 2)
+END
+
+# РЕЖИМ 4: Тест производительности процессора и интерпретатора
+FUNC RUN_BENCHMARK():
+    CLS()
+    COLOR(10, 0)
+    PRINT: "=== [4] Бенчмарк производительности CPU и Umbrly ==="
+    COLOR_RESET()
+    PRINT: "Запуск серии нагрузочных тестов..."
+    PRINT: ""
+
+    # Тест 1: Математика и рекурсивные Числа Фибоначчи
+    FLOAT_T0 = CLOCK()
+    INT_FIB_RES = BENCHMARK_FIB(24)
+    FLOAT_T1 = CLOCK()
+    FLOAT_DUR1 = FLOAT_T1 - FLOAT_T0
+
+    PRINT: "1. Рекурсия (FIB 24 = [INT_FIB_RES]): [ROUND(FLOAT_DUR1 * 1000.0)] мс"
+
+    # Тест 2: Итерации массива и строковые операции
+    FLOAT_T2 = CLOCK()
+    ARR_DATA = []
+    FOR: INT_I = 1 TO 5000
+        PUSH(ARR_DATA, "Item_" + TOSTR(INT_I))
+    END
+    FLOAT_T3 = CLOCK()
+    FLOAT_DUR2 = FLOAT_T3 - FLOAT_T2
+
+    PRINT: "2. Генерация и заполнение 5,000 элементов массива: [ROUND(FLOAT_DUR2 * 1000.0)] мс"
+
+    FLOAT_TOTAL = FLOAT_DUR1 + FLOAT_DUR2
+    COLOR(11, 0)
+    PRINT: ""
+    PRINT: "Общий балл производительности системы: [ROUND(1000.0 / (FLOAT_TOTAL + 0.001))] очков"
+    COLOR_RESET()
+    PRINT: ""
+    INPUT: "Нажмите Enter для возврата в меню..."
+END
+
+# ==============================================================================
+#  Главный цикл программы
+# ==============================================================================
+FUNC MAIN():
+    CONSOLE_TITLE("Umbrly System Guardian v1.0")
+    OBJ_SYS = SystemInfo()
+
+    WHILE: TRUE
+        CLS()
+        COLOR(11, 0)
+        PRINT: "========================================================"
+        PRINT: "        Umbrly System Guardian & Dev Suite v1.0         "
+        PRINT: "========================================================"
+        COLOR_RESET()
+        PRINT: "  Хост: [OBJ_SYS.STR_HOST] | Юзер: [OBJ_SYS.STR_USER] | Ядер: [OBJ_SYS.INT_CPUS]"
+        PRINT: "--------------------------------------------------------"
+        PRINT: "  1. 🔍 Диагностика системы и инструментов разработки"
+        PRINT: "  2. 🧹 Очистка временных файлов (%TEMP%)"
+        PRINT: "  3. 📋 Заметки и управление буфером обмена"
+        PRINT: "  4. ⚡ Тест производительности (Бенчмарк CPU)"
+        PRINT: "  5. 📂 Открыть сохранённый отчёт (system_guardian_report.txt)"
+        PRINT: "  0. 🚪 Выход"
+        PRINT: "--------------------------------------------------------"
+
+        STR_CMD = INPUT: "Выберите пункт меню [0-5]: "
+
+        IF: STR_CMD == "1"
+            RUN_DIAGNOSTICS(OBJ_SYS)
+        END
+        IF: STR_CMD == "2"
+            CLEAN_TEMP_FILES()
+        END
+        IF: STR_CMD == "3"
+            CLIPBOARD_VAULT()
+        END
+        IF: STR_CMD == "4"
+            RUN_BENCHMARK()
+        END
+        IF: STR_CMD == "5"
+            IF: FILE_EXISTS("system_guardian_report.txt")
+                SHELL_OPEN("system_guardian_report.txt")
+            ELSE:
+                COLOR(12, 0)
+                PRINT: "Отчёт ещё не создан! Запустите диагностику (пункт 1)."
+                COLOR_RESET()
+                INPUT: "Нажмите Enter..."
+            END
+        END
+        IF: STR_CMD == "0"
+            CLS()
+            COLOR(10, 0)
+            PRINT: "Спасибо за использование Umbrly System Guardian!"
+            COLOR_RESET()
+            SLEEP(500)
+            BREAK
+        END
+    END
+END
+
+# Запуск программы
+MAIN()
